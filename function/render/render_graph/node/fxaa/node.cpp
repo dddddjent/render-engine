@@ -3,6 +3,7 @@
 #include "core/vulkan/vulkan_util.h"
 #include "function/global_context.h"
 #include "function/render/render_graph/pipeline.hpp"
+#include "function/resource_manager/resource_manager.h"
 
 using namespace Vk;
 
@@ -157,6 +158,7 @@ void FXAANode::createPipeline(Configuration& cfg)
     {
         pipeline.param.original_img = g_ctx.dm.getResourceHandle(
             attachments->getAttachment(attachment_descriptions["original"].name).id);
+        pipeline.param.camera = g_ctx.dm.getResourceHandle(g_ctx.rm->camera.buffer.id);
         pipeline.param_buf = Buffer::New(
             g_ctx.vk,
             sizeof(Param),

@@ -50,8 +50,8 @@ layout(set = BindlessDescriptorSet, binding = BindlessUniformBinding) uniform Ca
     float aspect_ratio;
     vec3 up;
     float focal_distance;
-    float width;
-    float height;
+    int width;
+    int height;
 }
 GetLayoutVariableName(camera)[];
 

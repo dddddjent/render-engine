@@ -5,6 +5,7 @@
 class FXAANode : public RenderGraphNode {
     struct Param {
         Vk::DescriptorHandle original_img;
+        Vk::DescriptorHandle camera;
     };
 
     void createRenderPass();

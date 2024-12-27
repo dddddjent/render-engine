@@ -14,8 +14,8 @@ struct CameraData {
     float aspect_ratio;
     glm::vec3 up;
     float focal_distance;
-    float width;
-    float height;
+    int width;
+    int height;
 };
 
 struct Camera {
