@@ -145,7 +145,6 @@ vec3 colorOnSingleLight(Light light)
     vec3 F = F(F0, h, w_e);
     float G = G(w_e, w_i, normal, k);
     float denominator = 4 * dot(w_e, normal) * dot_w_i_n;
-    denominator += 0.01;
 
     vec3 specular = intensity * D * F * G / denominator * dot_w_i_n;
     vec3 diffuse = intensity * color * dot_w_i_n / PI;
