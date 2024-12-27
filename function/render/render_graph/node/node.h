@@ -4,5 +4,6 @@
 #include "./vorticity_field/node.h"
 #include "./fire_object/node.h"
 #include "./hdr_to_sdr/node.h"
+#include "./calculate_luminance/node.h"
 #include "./recorder/node.h"
 #include "./ui/node.h"

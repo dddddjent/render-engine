@@ -6,26 +6,30 @@
 
 using namespace Vk;
 
-HDRToSDR::HDRToSDR(const std::string& name, const std::string& hdr_buf, const std::string& sdr_buf)
+CalculateLuminance::CalculateLuminance(
+    const std::string& name,
+    const std::string& sdr_buf,
+    const std::string& sdr_buf_alpha_illuminance)
     : RenderGraphNode(name)
 {
-    bool is_swapchain = sdr_buf == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME();
+    bool is_swapchain = sdr_buf_alpha_illuminance == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME();
+
     attachment_descriptions = {
         {
-            "hdr",
+            "sdr",
             {
-                hdr_buf,
+                sdr_buf,
                 RenderAttachmentType::Color | RenderAttachmentType::Sampler,
                 RenderAttachmentRW::Read,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-                VK_FORMAT_R32G32B32A32_SFLOAT,
+                VK_FORMAT_B8G8R8A8_UNORM,
             },
         },
         {
-            "sdr",
+            "sdr_alpha_illuminance",
             RenderAttachmentDescription {
-                sdr_buf,
+                sdr_buf_alpha_illuminance,
                 RenderAttachmentType::Color,
                 RenderAttachmentRW::Write,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -36,7 +40,7 @@ HDRToSDR::HDRToSDR(const std::string& name, const std::string& hdr_buf, const st
     };
 }
 
-void HDRToSDR::init(Configuration& cfg, RenderAttachments& attachments)
+void CalculateLuminance::init(Configuration& cfg, RenderAttachments& attachments)
 {
     this->attachments = &attachments;
     createRenderPass();
@@ -44,12 +48,12 @@ void HDRToSDR::init(Configuration& cfg, RenderAttachments& attachments)
     createPipeline(cfg);
 }
 
-void HDRToSDR::createFramebuffer()
+void CalculateLuminance::createFramebuffer()
 {
     framebuffers.resize(g_ctx.vk.swapChainImages.size());
     for (int i = 0; i < g_ctx.vk.swapChainImages.size(); i++) {
         std::array<VkImageView, 1> views = {
-            getAttachmentByName(attachment_descriptions["sdr"].name, attachments, i)->view
+            getAttachmentByName(attachment_descriptions["sdr_alpha_illuminance"].name, attachments, i)->view
         };
 
         VkFramebufferCreateInfo framebufferInfo {};
@@ -67,10 +71,10 @@ void HDRToSDR::createFramebuffer()
     }
 }
 
-void HDRToSDR::createRenderPass()
+void CalculateLuminance::createRenderPass()
 {
     std::vector<AttachmentDescriptionHelper> helpers = {
-        { "sdr", VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE },
+        { "sdr_alpha_illuminance", VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE },
     };
 
     VkSubpassDependency dependency = {};
@@ -84,7 +88,7 @@ void HDRToSDR::createRenderPass()
     render_pass = DefaultRenderPass(attachment_descriptions, helpers, dependency);
 }
 
-void HDRToSDR::createPipeline(Configuration& cfg)
+void CalculateLuminance::createPipeline(Configuration& cfg)
 {
     {
         std::vector<VkDescriptorSetLayout> descLayouts = {
@@ -102,8 +106,8 @@ void HDRToSDR::createPipeline(Configuration& cfg)
         auto rasterization = Pipeline<Param>::rasterizationDefault();
         auto multisample = Pipeline<Param>::multisampleDefault();
 
-        auto vertShaderCode = readFile(cfg.shader_directory + "/hdr_to_sdr/node.vert.spv");
-        auto fragShaderCode = readFile(cfg.shader_directory + "/hdr_to_sdr/node.frag.spv");
+        auto vertShaderCode = readFile(cfg.shader_directory + "/calculate_luminance/node.vert.spv");
+        auto fragShaderCode = readFile(cfg.shader_directory + "/calculate_luminance/node.frag.spv");
         auto vertShaderModule = createShaderModule(g_ctx.vk, vertShaderCode);
         auto fragShaderModule = createShaderModule(g_ctx.vk, fragShaderCode);
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {
@@ -151,8 +155,8 @@ void HDRToSDR::createPipeline(Configuration& cfg)
     }
 
     {
-        pipeline.param.hdr_img = g_ctx.dm.getResourceHandle(
-            attachments->getAttachment(attachment_descriptions["hdr"].name).id);
+        pipeline.param.sdr_img = g_ctx.dm.getResourceHandle(
+            attachments->getAttachment(attachment_descriptions["sdr"].name).id);
         pipeline.param_buf = Buffer::New(
             g_ctx.vk,
             sizeof(Param),
@@ -164,7 +168,7 @@ void HDRToSDR::createPipeline(Configuration& cfg)
     }
 }
 
-void HDRToSDR::record(uint32_t swapchain_index)
+void CalculateLuminance::record(uint32_t swapchain_index)
 {
     setDefaultViewportAndScissor();
 
@@ -187,7 +191,7 @@ void HDRToSDR::record(uint32_t swapchain_index)
     vkCmdEndRenderPass(g_ctx.vk.commandBuffer);
 }
 
-void HDRToSDR::onResize()
+void CalculateLuminance::onResize()
 {
     for (auto& framebuffer : framebuffers) {
         vkDestroyFramebuffer(g_ctx.vk.device, framebuffer, nullptr);
@@ -195,7 +199,7 @@ void HDRToSDR::onResize()
     createFramebuffer();
 }
 
-void HDRToSDR::destroy()
+void CalculateLuminance::destroy()
 {
     pipeline.destroy();
     vkDestroyRenderPass(g_ctx.vk.device, render_pass, nullptr);

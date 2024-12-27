@@ -20,6 +20,7 @@ protected:
         VkSubpassDependency& dependency);
     void bindDescriptorSet(uint32_t index, VkPipelineLayout layout, VkDescriptorSet* set);
     void setDefaultViewportAndScissor();
+    Vk::Image* getAttachmentByName(const std::string& name, RenderAttachments* attachments, int swapchain_index);
 
 public:
     // init the descriptrion directly in the derived class

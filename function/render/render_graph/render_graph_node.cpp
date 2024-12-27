@@ -95,3 +95,11 @@ void RenderGraphNode::setDefaultViewportAndScissor()
     scissor.extent = Vk::toVkExtent2D(g_ctx.vk.swapChainImages[0]->extent);
     vkCmdSetScissor(g_ctx.vk.commandBuffer, 0, 1, &scissor);
 }
+
+Vk::Image* RenderGraphNode::getAttachmentByName(const std::string& name, RenderAttachments* attachments, int swapchain_index)
+{
+    if (name == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME()) {
+        return g_ctx.vk.swapChainImages[swapchain_index].get();
+    }
+    return &(attachments->getAttachment(name));
+}

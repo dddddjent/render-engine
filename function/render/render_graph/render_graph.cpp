@@ -63,7 +63,7 @@ void RenderGraph::initAttachments()
             if (it == descriptions.end()) {
                 descriptions[desc_pair.second.name] = desc_pair.second;
             } else {
-                assert(it->second.format == desc_pair.second.format);
+                assert(it->second.format == desc_pair.second.format && "Two connected attachments have different formats");
                 it->second.usage |= desc_pair.second.usage;
                 it->second.type = it->second.type | desc_pair.second.type;
                 it->second.rw = it->second.rw | desc_pair.second.rw;
@@ -81,8 +81,6 @@ void RenderGraph::prepareAttachmentsForNode(const auto& node, uint32_t swapchain
         auto& image = desc_pair.second.name == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME()
             ? *g_ctx.vk.swapChainImages[swapchain_index]
             : attachments.getAttachment(desc_pair.second.name);
-        if (image.layout == swapchain_index)
-            continue;
         image.TransitionLayout(g_ctx.vk, desc_pair.second.layout);
     }
 }
