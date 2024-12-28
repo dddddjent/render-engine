@@ -216,9 +216,6 @@ void Mesh::calculateTangents()
         auto& uv2 = v2.uv;
 
         auto t = computeTangent(v0.pos, v1.pos, v2.pos, uv0, uv1, uv2);
-        // assert(glm::isnan(t).x == false);
-        // assert(glm::isnan(t).y == false);
-        // assert(glm::isnan(t).z == false);
         if (glm::isnan(t).x == true or glm::isnan(t).y == true or glm::isnan(t).z == true) {
             auto normal = glm::normalize(glm::cross(
                 v1.pos - v0.pos, v2.pos - v0.pos));
