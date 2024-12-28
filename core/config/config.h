@@ -5,16 +5,9 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
-#include <variant>
 #include <vector>
 
 using json = nlohmann::json;
-
-using PropertyVariant = std::variant<
-    std::string,
-    float,
-    std::vector<float>,
-    bool>;
 
 struct TextureConfiguration {
     std::string name;
@@ -39,14 +32,19 @@ struct ObjectConfiguration {
     std::string material;
 };
 
-using MeshConfiguration = std::unordered_map<std::string, PropertyVariant>;
+using MeshConfiguration = json;
 
 struct LightConfiguration {
     std::array<float, 3> posOrDir;
     std::array<float, 3> intensity;
 };
 
-using CameraConfiguration = std::unordered_map<std::string, PropertyVariant>;
+struct CameraConfiguration {
+    std::array<float, 3> position;
+    std::array<float, 3> view;
+    float fov;
+    float move_speed;
+};
 
 struct FieldConfiguration {
     std::string name;
@@ -131,48 +129,6 @@ struct RigidCoupleSimConfiguration {
 
 using Configuration = json;
 
-namespace nlohmann {
-template <>
-struct adl_serializer<PropertyVariant> {
-    static void to_json(json& j, const PropertyVariant& v)
-    {
-        switch (v.index()) {
-        case 0:
-            j = std::get<std::string>(v);
-            break;
-        case 1:
-            j = std::get<float>(v);
-            break;
-        case 2:
-            j = std::get<std::vector<float>>(v);
-            break;
-        case 3:
-            j = std::get<bool>(v);
-            break;
-        default:
-            // j = std::get<json>(v);
-            throw std::runtime_error("Unsupported type");
-        }
-    }
-
-    static void from_json(const json& j, PropertyVariant& v)
-    {
-        if (j.is_string()) {
-            v = j.get<std::string>();
-        } else if (j.is_number()) {
-            v = j.get<float>();
-        } else if (j.is_array()) {
-            v = j.get<std::vector<float>>();
-        } else if (j.is_boolean()) {
-            v = j.get<bool>();
-        } else {
-            // v = j.get<json>();
-            throw std::runtime_error("Unsupported type");
-        }
-    }
-};
-}
-
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     TextureConfiguration,
     name,
@@ -189,6 +145,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     roughness_texture,
     normal_texture,
     ao_texture);
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+    CameraConfiguration,
+    position,
+    view,
+    fov,
+    move_speed);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     ObjectConfiguration,

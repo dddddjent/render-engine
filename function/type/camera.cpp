@@ -133,10 +133,10 @@ void Camera::go_down()
 Camera Camera::fromConfiguration(CameraConfiguration& config)
 {
     Camera camera;
-    camera.data.eye_w = arrayToVec3(std::get<std::vector<float>>(config["position"]));
-    camera.data.view_dir = glm::normalize(arrayToVec3(std::get<std::vector<float>>(config["view"])));
+    camera.data.eye_w = arrayToVec3(config.position);
+    camera.data.view_dir = glm::normalize(arrayToVec3(config.view));
     camera.data.up = glm::vec3(0, 1, 0);
-    camera.data.fov_y = std::get<float>(config["fov"]);
+    camera.data.fov_y = config.fov;
     camera.data.width = g_ctx.vk.swapChainImages[0]->extent.width;
     camera.data.height = g_ctx.vk.swapChainImages[0]->extent.height;
 
@@ -146,7 +146,7 @@ Camera Camera::fromConfiguration(CameraConfiguration& config)
     camera.data.proj[1][1] *= -1;
     camera.data.focal_distance = 0.1f;
 
-    camera.move_speed = std::get<float>(config["move_speed"]);
+    camera.move_speed = config.move_speed;
     camera.init_view_dir = glm::normalize(glm::vec3(1, 0, 0));
 
     float theta = glm::acos(glm::dot(camera.data.view_dir, glm::vec3(0, 1, 0)));

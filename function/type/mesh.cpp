@@ -30,7 +30,7 @@ Mesh Mesh::fromConfiguration(MeshConfiguration& config)
 {
     Mesh mesh;
 
-    std::string type = std::get<std::string>(config["type"]);
+    std::string type = config.at("type").get<std::string>();
     if (type == "sphere") {
         mesh = sphereMesh(config);
     } else if (type == "cube") {
@@ -43,7 +43,7 @@ Mesh Mesh::fromConfiguration(MeshConfiguration& config)
         throw std::runtime_error("Mesh type not supported");
     }
 
-    mesh.name = std::get<std::string>(config["name"]);
+    mesh.name = config.at("name").get<std::string>();
 
     return mesh;
 }
@@ -68,9 +68,9 @@ void Mesh::initBuffersFromData()
 Mesh Mesh::sphereMesh(MeshConfiguration& config)
 {
     Mesh mesh;
-    glm::vec3 pos = arrayToVec3(std::get<std::vector<float>>(config["pos"]));
-    float radius = std::get<float>(config["radius"]);
-    int tessellation = std::get<float>(config["tessellation"]);
+    glm::vec3 pos = arrayToVec3(config.at("pos").get<std::vector<float>>());
+    float radius = config.at("radius").get<float>();
+    int tessellation = config.at("tessellation").get<int>();
 
     auto [vertices, indices] = GeometryGenerator::sphere(pos, radius, tessellation);
     mesh.data.vertices = std::move(vertices);
@@ -85,8 +85,8 @@ Mesh Mesh::sphereMesh(MeshConfiguration& config)
 Mesh Mesh::cubeMesh(MeshConfiguration& config)
 {
     Mesh mesh;
-    glm::vec3 pos = arrayToVec3(std::get<std::vector<float>>(config["pos"]));
-    glm::vec3 scale = arrayToVec3(std::get<std::vector<float>>(config["scale"]));
+    glm::vec3 pos = arrayToVec3(config.at("pos").get<std::vector<float>>());
+    glm::vec3 scale = arrayToVec3(config.at("scale").get<std::vector<float>>());
 
     auto [vertices, indices] = GeometryGenerator::cube(pos, scale);
     mesh.data.vertices = std::move(vertices);
@@ -101,9 +101,9 @@ Mesh Mesh::cubeMesh(MeshConfiguration& config)
 Mesh Mesh::planeMesh(MeshConfiguration& config)
 {
     Mesh mesh;
-    glm::vec3 pos = arrayToVec3(std::get<std::vector<float>>(config["pos"]));
-    glm::vec3 normal = arrayToVec3(std::get<std::vector<float>>(config["normal"]));
-    std::vector<float> size = std::get<std::vector<float>>(config["size"]);
+    glm::vec3 pos = arrayToVec3(config.at("pos").get<std::vector<float>>());
+    glm::vec3 normal = arrayToVec3(config.at("normal").get<std::vector<float>>());
+    std::vector<float> size = config.at("size").get<std::vector<float>>();
 
     auto [vertices, indices] = GeometryGenerator::plane(pos, normal, size);
     mesh.data.vertices = std::move(vertices);
@@ -119,7 +119,7 @@ Mesh Mesh::objMesh(MeshConfiguration& config)
 {
     Mesh mesh;
 
-    std::string inputfile = std::get<std::string>(config["path"]);
+    std::string inputfile = config.at("path").get<std::string>();
     tinyobj::ObjReaderConfig reader_config;
     tinyobj::ObjReader reader;
 
