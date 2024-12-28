@@ -14,15 +14,17 @@ char av_error[AV_ERROR_MAX_STRING_SIZE] = { 0 };
 #define av_err2str(errnum) av_make_error_string(av_error, AV_ERROR_MAX_STRING_SIZE, errnum)
 }
 
-void Recorder::init(const Configuration& config)
+void Recorder::init(const Configuration& cfg)
 {
     av_log_set_level(AV_LOG_WARNING);
 
-    bit_rate = config.recorder.bit_rate;
-    frame_rate = config.recorder.frame_rate;
-    is_recording = config.recorder.record_from_start;
+    JSON_GET(RecorderConfiguration, recorder_config, cfg, "recorder");
+
+    bit_rate = recorder_config.bit_rate;
+    frame_rate = recorder_config.frame_rate;
+    is_recording = recorder_config.record_from_start;
     if (is_recording) {
-        begin(config.recorder.output_path, config.width, config.height);
+        begin(recorder_config.output_path, cfg["width"], cfg["height"]);
     }
 }
 

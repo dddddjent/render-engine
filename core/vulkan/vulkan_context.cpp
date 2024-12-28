@@ -1,4 +1,5 @@
 #include "vulkan_context.h"
+#include "core/tool/logger.h"
 #include "core/vulkan/swapchain_support.h"
 #include "core/vulkan/type/image.h"
 #include "core/vulkan/vulkan_util.h"

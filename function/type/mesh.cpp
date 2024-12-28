@@ -1,5 +1,6 @@
 #include "mesh.h"
 #include "core/math/math.h"
+#include "core/tool/logger.h"
 #include "function/global_context.h"
 #include "function/tool/geometry.h"
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -196,9 +197,9 @@ glm::vec3 Mesh::computeFallbackTangent(const glm::vec3& normal)
 {
     glm::vec3 normalized = glm::normalize(normal);
 
-    glm::vec3 other = (glm::abs(normalized.x) < glm::abs(normalized.z)) 
-                      ? glm::vec3(1.0f, 0.0f, 0.0f)  // Prefer x-axis
-                      : glm::vec3(0.0f, 0.0f, 1.0f); // Prefer z-axis
+    glm::vec3 other = (glm::abs(normalized.x) < glm::abs(normalized.z))
+        ? glm::vec3(1.0f, 0.0f, 0.0f) // Prefer x-axis
+        : glm::vec3(0.0f, 0.0f, 1.0f); // Prefer z-axis
 
     glm::vec3 tangent = glm::normalize(glm::cross(normalized, other));
     return tangent;
@@ -218,10 +219,9 @@ void Mesh::calculateTangents()
         // assert(glm::isnan(t).x == false);
         // assert(glm::isnan(t).y == false);
         // assert(glm::isnan(t).z == false);
-        if(glm::isnan(t).x == true or glm::isnan(t).y == true or glm::isnan(t).z == true) {
+        if (glm::isnan(t).x == true or glm::isnan(t).y == true or glm::isnan(t).z == true) {
             auto normal = glm::normalize(glm::cross(
-                    v1.pos - v0.pos, v2.pos - v0.pos
-                    ));
+                v1.pos - v0.pos, v2.pos - v0.pos));
             t = computeFallbackTangent(normal);
         }
         v0.tangent += t;

@@ -1,4 +1,5 @@
 #include "material.h"
+#include "core/tool/logger.h"
 #include "core/math/math.h"
 #include "function/global_context.h"
 #include "function/resource_manager/resource_manager.h"

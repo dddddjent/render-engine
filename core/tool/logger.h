@@ -2,8 +2,7 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #include <spdlog/spdlog.h>
-
-struct Configuration;
+#include "core/config/config.h"
 
 class Logger {
     std::shared_ptr<spdlog::logger> console;

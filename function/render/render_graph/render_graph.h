@@ -1,13 +1,12 @@
 #pragma once
 
+#include "core/config/config.h"
 #include "function/render/render_graph/node/node.h"
 #include "function/render/render_graph/render_attachments.h"
 #include "function/render/render_graph/render_graph_node.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-struct Configuration;
 
 class RenderGraph {
 protected:

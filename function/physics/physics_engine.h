@@ -1,6 +1,7 @@
 #pragma once
 
-struct Configuration;
+#include "core/config/config.h"
+
 struct GlobalContext;
 
 class PhysicsEngine {

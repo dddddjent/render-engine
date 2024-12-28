@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "core/math/math.h"
+#include "core/tool/logger.h"
 #include "function/global_context.h"
 #include <cstring>
 #include <glm/glm.hpp>

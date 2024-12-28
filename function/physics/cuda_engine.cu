@@ -128,16 +128,17 @@ void CudaEngine::initSemaphore()
     cudaImportExternalSemaphore(&vkUpdateSemaphore, &externalSemaphoreHandleDesc);
 }
 
-void CudaEngine::init(Configuration& config, GlobalContext* g_ctx)
+void CudaEngine::init(Configuration& cfg, GlobalContext* g_ctx)
 {
     this->g_ctx = g_ctx;
 
     cudaStreamCreate(&streamToRun);
     initSemaphore();
     initExternalMem();
-    total_frame = config.driver.total_frame;
-    frame_rate = config.driver.frame_rate;
-    steps_per_frame = config.driver.steps_per_frame;
+    JSON_GET(DriverConfiguration, driver_cfg, cfg, "driver")
+    total_frame = driver_cfg.total_frame;
+    frame_rate = driver_cfg.frame_rate;
+    steps_per_frame = driver_cfg.steps_per_frame;
     current_frame = 0;
 }
 

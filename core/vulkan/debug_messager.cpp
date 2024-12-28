@@ -1,4 +1,5 @@
 #include "debug_messager.h"
+#include "core/tool/logger.h"
 #include "core/vulkan/vulkan_context.h"
 
 namespace Vk {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/config/config.h"
-#include "core/tool/logger.h"
 #include "core/vulkan/debug_messager.h"
 #include "core/vulkan/queue_family_indices.h"
 #include <vulkan/vulkan.h>

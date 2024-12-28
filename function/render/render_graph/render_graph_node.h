@@ -1,11 +1,10 @@
 #pragma once
 
+#include "core/config/config.h"
 #include "function/render/render_graph/pipeline.hpp"
 #include "function/render/render_graph/render_attachment_description.h"
 #include <string>
 #include <unordered_map>
-
-struct Configuration;
 
 class RenderGraphNode {
 protected:

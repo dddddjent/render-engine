@@ -1,5 +1,6 @@
 #include "field.h"
 #include "core/math/math.h"
+#include "core/tool/logger.h"
 #include "core/tool/npy.hpp"
 #include "core/vulkan/vulkan_util.h"
 #include "function/global_context.h"
@@ -72,21 +73,20 @@ std::vector<float> Field::loadFieldData(const FieldConfiguration& cfg)
     std::string extension_name = std::filesystem::path(cfg.path).extension().string();
 
     std::vector<float> data;
-    if(extension_name == ".npy") {
+    if (extension_name == ".npy") {
         npy::npy_data d = npy::read_npy<float>(cfg.path);
         data = d.data;
         const auto& image_shape = d.shape;
         assert(image_shape[0] == cfg.dimension[0]);
         assert(image_shape[1] == cfg.dimension[1]);
         assert(image_shape[2] == cfg.dimension[2]);
-    }
-    else if(extension_name == ".vti") {
+    } else if (extension_name == ".vti") {
         data = readVti<float>(cfg.path, cfg.name, nullptr);
     } else {
         ERROR_ALL("Unknown file extension \"" + extension_name + "\"");
         throw std::runtime_error("Unknown file extension \"" + extension_name + "\"");
     }
-    
+
     return data;
 }
 
@@ -116,7 +116,7 @@ void Field::initFieldImage(const FieldConfiguration& cfg)
     field_img.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
-void Field::updateFieldImage(const std::vector<float> &data)
+void Field::updateFieldImage(const std::vector<float>& data)
 {
     field_img.Update(g_ctx.vk, data.data());
 }

@@ -5,28 +5,35 @@ using namespace Vk;
 
 void ResourceManager::load(Configuration& config)
 {
-    camera = Camera::fromConfiguration(config.camera);
-    lights = Lights::fromConfiguration(config.lights);
+    JSON_GET(CameraConfiguration, camera_cfg, config, "camera");
+    camera = Camera::fromConfiguration(camera_cfg);
+    JSON_GET(std::vector<LightConfiguration>, lights_cfg, config, "lights");
+    lights = Lights::fromConfiguration(lights_cfg);
 
-    for (auto& cfg : config.meshes) {
+    JSON_GET(std::vector<MeshConfiguration>, mesh_cfg, config, "meshes");
+    for (auto& cfg : mesh_cfg) {
         auto mesh = Mesh::fromConfiguration(cfg);
         meshes[mesh.name] = mesh;
     }
 
     loadDefaultTextures();
-    for (auto& cfg : config.textures) {
+    JSON_GET(std::vector<TextureConfiguration>, texture_cfg, config, "textures");
+    for (auto& cfg : texture_cfg) {
         auto texture = Texture::fromConfiguration(cfg);
         textures[texture.name] = texture;
     }
 
-    for (auto& cfg : config.materials) {
+    JSON_GET(std::vector<MaterialConfiguration>, material_cfg, config, "materials");
+    for (auto& cfg : material_cfg) {
         auto material = Material::fromConfiguration(cfg);
         materials[material.name] = material;
     }
 
-    fields = Fields::fromConfiguration(config.fields);
+    JSON_GET(FieldsConfiguration, fields_cfg, config, "fields");
+    fields = Fields::fromConfiguration(fields_cfg);
 
-    for (auto& cfg : config.objects) {
+    JSON_GET(std::vector<ObjectConfiguration>, objects_cfg, config, "objects");
+    for (auto& cfg : objects_cfg) {
         objects.emplace_back(Object::fromConfiguration(cfg));
     }
 

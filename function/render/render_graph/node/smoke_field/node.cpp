@@ -133,19 +133,18 @@ void SmokeFieldNode::createPipeline(Configuration& cfg)
         auto rasterization = Pipeline<Param>::rasterizationDefault();
         auto multisample = Pipeline<Param>::multisampleDefault();
 
-        auto vertShaderCode = readFile(cfg.shader_directory + "/smoke_field/node.vert.spv");
+        auto vertShaderCode = readFile(cfg.at("shader_directory").get<std::string>() + "/smoke_field/node.vert.spv");
 
-        auto frag_shader_path = std::filesystem::path(cfg.engine_directory) / "function/render/render_graph/node/smoke_field/node.frag";
+        auto frag_shader_path = std::filesystem::path(cfg.at("engine_directory").get<std::string>()) / "function/render/render_graph/node/smoke_field/node.frag";
         auto filename = frag_shader_path.filename().string();
-        auto generated_path = cfg.shader_directory + "/smoke_field/generated/" + filename;
-        auto generated_spv = cfg.shader_directory + "/smoke_field/" + (filename + ".spv");
+        auto generated_path = cfg.at("shader_directory").get<std::string>() + "/smoke_field/generated/" + filename;
+        auto generated_spv = cfg.at("shader_directory").get<std::string>() + "/smoke_field/" + (filename + ".spv");
         if (!std::filesystem::exists(std::filesystem::path(generated_path).parent_path())) {
             std::filesystem::create_directories(std::filesystem::path(generated_path).parent_path());
         }
-        replaceDefine("FIELD_COUNT", (int)cfg.fields.arr.size(), frag_shader_path, generated_path);
+        JSON_GET(FieldsConfiguration, fields_cfg, cfg, "fields");
+        replaceDefine("FIELD_COUNT", (int)fields_cfg.arr.size(), frag_shader_path, generated_path);
         replaceDefine("MAX_FIELDS", (int)MAX_FIELDS, generated_path, generated_path);
-        replaceDefine("FIRE_SELF_ILLUMINATION_BOOST",
-            (int)cfg.fields.fire_configuration.self_illumination_boost, generated_path, generated_path);
         replaceInclude("../../shader/common.glsl",
             "../../common.glsl",
             generated_path, generated_path);

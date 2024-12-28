@@ -102,8 +102,8 @@ void HDRToSDR::createPipeline(Configuration& cfg)
         auto rasterization = Pipeline<Param>::rasterizationDefault();
         auto multisample = Pipeline<Param>::multisampleDefault();
 
-        auto vertShaderCode = readFile(cfg.shader_directory + "/hdr_to_sdr/node.vert.spv");
-        auto fragShaderCode = readFile(cfg.shader_directory + "/hdr_to_sdr/node.frag.spv");
+        auto vertShaderCode = readFile(cfg.at("shader_directory").get<std::string>() + "/hdr_to_sdr/node.vert.spv");
+        auto fragShaderCode = readFile(cfg.at("shader_directory").get<std::string>() + "/hdr_to_sdr/node.frag.spv");
         auto vertShaderModule = createShaderModule(g_ctx.vk, vertShaderCode);
         auto fragShaderModule = createShaderModule(g_ctx.vk, fragShaderCode);
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {

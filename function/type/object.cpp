@@ -1,4 +1,5 @@
 #include "object.h"
+#include "core/tool/logger.h"
 #include "core/vulkan/vulkan_util.h"
 #include "function/global_context.h"
 #include "function/resource_manager/resource_manager.h"

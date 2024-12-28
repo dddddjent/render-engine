@@ -1,4 +1,5 @@
 #include "light.h"
+#include "core/tool/logger.h"
 #include "core/math/math.h"
 #include "function/global_context.h"
 

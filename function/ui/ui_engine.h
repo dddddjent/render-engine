@@ -1,9 +1,8 @@
 #pragma once
 
+#include "core/config/config.h"
 #include <functional>
 #include <vulkan/vulkan_core.h>
-
-struct Configuration;
 
 class UIEngine {
 public:

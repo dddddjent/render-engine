@@ -8,7 +8,6 @@
 #include <windows.h>
 #endif
 
-struct Configuration;
 struct GlobalContext;
 
 class CudaEngine : public PhysicsEngine {

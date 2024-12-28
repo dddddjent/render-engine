@@ -1,6 +1,7 @@
 #include "render_engine.h"
 #include "core/vulkan/descriptor_manager.h"
 #include "core/vulkan/vulkan_context.h"
+#include "core/tool/logger.h"
 #include "function/global_context.h"
 #include "function/render/render_graph/graph/graph.h"
 #include "function/resource_manager/resource_manager.h"
@@ -10,9 +11,9 @@ using namespace Vk;
 
 void RenderEngine::init_core(const Configuration& config)
 {
-    WIDTH = config.width;
-    HEIGHT = config.height;
-    base_window_name = config.name;
+    WIDTH = config["width"];
+    HEIGHT = config["height"];
+    base_window_name = config["name"];
     this->config = &const_cast<Configuration&>(config);
 
     initGLFW();
@@ -26,16 +27,16 @@ void RenderEngine::init_render(const Configuration& config, GlobalContext* g_ctx
 
 void RenderEngine::initRenderGraph(std::function<void(VkCommandBuffer)> fn)
 {
-    if (config->render_graph == "default") {
+    if (config->at("render_graph") == "default") {
         render_graph = std::make_unique<DefaultGraph>();
-    } else if (config->render_graph == "smoke_field") {
+    } else if (config->at("render_graph") == "smoke_field") {
         render_graph = std::make_unique<SmokeFieldGraph>();
-    } else if (config->render_graph == "fire_field") {
+    } else if (config->at("render_graph") == "fire_field") {
         render_graph = std::make_unique<FireFieldGraph>();
-    } else if (config->render_graph == "vorticity_field") {
+    } else if (config->at("render_graph") == "vorticity_field") {
         render_graph = std::make_unique<VorticityFieldGraph>();
     } else {
-        throw std::runtime_error("render graph not found: " + config->render_graph);
+        throw std::runtime_error("render graph not found: " + config->at("render_graph").get<std::string>());
     }
     render_graph->registerUIRenderfunction(fn);
     render_graph->init(*config);

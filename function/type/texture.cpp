@@ -1,4 +1,5 @@
 #include "texture.h"
+#include "core/tool/logger.h"
 #include "function/global_context.h"
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/jpeg.hpp>

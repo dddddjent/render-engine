@@ -1,10 +1,10 @@
 #pragma once
 
+#include "core/config/config.h"
 #include <cstdint>
 #include <filesystem>
 #include <vector>
 
-struct Configuration;
 struct AVFormatContext;
 struct AVCodecContext;
 struct AVStream;
