@@ -50,14 +50,16 @@ engine.cleanup();
 
 Requires a config.json
 
-- Please refer to the config template to create your own config.json.
+- It doesn't require to supply all the fields
 
 - Render graph:
+
   - default: objects only
   - fire_field: requires two fields, fire and smoke. Need `fire_colors.npy`
   - smoke_field: at most 2 fields
   - vorticity_field: at most 2 fields
-- shader_directory: engine's xmake.lua compiles shaders to `${buildir}/shaders`. This should be the same as the xmake.lua.
+  - shader_directory: engine's xmake.lua compiles shaders to `${buildir}/shaders`. This should be the same as the xmake.lua.
+  - extra_args: extra arguments to the graph
 
 - Objects:
 
@@ -88,6 +90,12 @@ Requires a config.json
   - record_from_start: whether start to record at launch
 
 ## Internal
+
+### Config
+
+- The top level `Configuration` is a `json`
+- To convert json to a struct, use `JSON_GET(type, name, json, key)`
+- Use `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` if the struct has a json field
 
 ### Global Context
 
