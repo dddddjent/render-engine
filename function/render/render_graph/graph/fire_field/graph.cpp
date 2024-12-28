@@ -7,7 +7,11 @@ void FireFieldGraph::init(Configuration& cfg)
     nodes["FireField"]
         = std::move(std::make_unique<FireFieldNode>("FireField", "object_color", "depth", "field_object_color"));
     nodes["HDRToSDR"]
-        = std::move(std::make_unique<HDRToSDR>("HDRToSDR", "field_object_color", RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME()));
+        = std::move(std::make_unique<HDRToSDR>("HDRToSDR", "field_object_color", "sdr_buf"));
+    nodes["CalculateLuminance"]
+        = std::move(std::make_unique<CalculateLuminance>("CalculateLuminance", "sdr_buf", "sdr_buf_alpha_illuminance"));
+    nodes["FXAA"]
+        = std::move(std::make_unique<FXAANode>("FXAA", "sdr_buf_alpha_illuminance", RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME()));
     nodes["UI"]
         = std::move(std::make_unique<UI>("UI", RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME(), fn));
     nodes["Record"]
@@ -21,8 +25,10 @@ void FireFieldGraph::init(Configuration& cfg)
     graph = {
         { "FireField", { "FireObject" } },
         { "HDRToSDR", { "FireField" } },
-        { "Record", { "HDRToSDR" } },
-        { "UI", { "Record", "HDRToSDR" } },
+        { "CalculateLuminance", { "HDRToSDR" } },
+        { "FXAA", { "CalculateLuminance" } },
+        { "Record", { "FXAA" } },
+        { "UI", { "Record", "FXAA" } },
     };
     initGraph();
 }

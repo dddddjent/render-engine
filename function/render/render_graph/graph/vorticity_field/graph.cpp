@@ -7,7 +7,11 @@ void VorticityFieldGraph::init(Configuration& cfg)
     nodes["VorticityField"]
         = std::move(std::make_unique<VorticityFieldNode>("VorticityField", "object_color", "depth", "field_object_color"));
     nodes["HDRToSDR"]
-        = std::move(std::make_unique<HDRToSDR>("HDRToSDR", "field_object_color", RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME()));
+        = std::move(std::make_unique<HDRToSDR>("HDRToSDR", "field_object_color", "sdr_buf"));
+    nodes["CalculateLuminance"]
+        = std::move(std::make_unique<CalculateLuminance>("CalculateLuminance", "sdr_buf", "sdr_buf_alpha_illuminance"));
+    nodes["FXAA"]
+        = std::move(std::make_unique<FXAANode>("FXAA", "sdr_buf_alpha_illuminance", RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME()));
     nodes["UI"]
         = std::move(std::make_unique<UI>("UI", RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME(), fn));
     nodes["Record"]
@@ -21,7 +25,9 @@ void VorticityFieldGraph::init(Configuration& cfg)
     graph = {
         { "VorticityField", { "DefaultObject" } },
         { "HDRToSDR", { "VorticityField" } },
-        { "Record", { "HDRToSDR" } },
+        { "CalculateLuminance", { "HDRToSDR" } },
+        { "FXAA", { "CalculateLuminance" } },
+        { "Record", { "FXAA" } },
         { "UI", { "Record", "HDRToSDR" } },
     };
     RenderGraph::initGraph();

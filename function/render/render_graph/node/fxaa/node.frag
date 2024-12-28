@@ -9,7 +9,7 @@ const float CONTRAST_ABS_THRESHOLD = 0.0625;
 // 0.063 - 0.333
 const float CONTRAST_REL_THRESHOLD = 0.125;
 // 0.0 - 1.0
-const float PIXEL_BLENDING_FACTOR = 0.75;
+const float PIXEL_BLENDING_FACTOR  = 0.75;
 
 #if defined(FXAA_QUALITY_LOW)
 #define EXTRA_EDGE_STEPS 3
@@ -25,8 +25,7 @@ const float PIXEL_BLENDING_FACTOR = 0.75;
 #define LAST_EDGE_STEP_GUESS 8.0
 #endif
 
-layout(set = BindlessDescriptorSet,
-    binding = BindlessUniformBinding) uniform Camera
+layout(set = BindlessDescriptorSet, binding = BindlessUniformBinding) uniform Camera
 {
     mat4 view;
     mat4 proj;
@@ -54,23 +53,19 @@ layout(location = 0) out vec4 outColor;
 #define buf0 texture2Ds[pipelineParam.original_image]
 
 vec2 frameBufSize = vec2(camera.width, camera.height);
-vec2 pixelSize = 1.0 / frameBufSize;
+vec2 pixelSize    = 1.0 / frameBufSize;
 
 vec4 fastFXAA()
 {
-    float FXAA_SPAN_MAX = 8.0;
+    float FXAA_SPAN_MAX   = 8.0;
     float FXAA_REDUCE_MUL = 1.0 / 8.0;
     float FXAA_REDUCE_MIN = 1.0 / 128.0;
 
-    float lumaNW
-        = texture(buf0, (gl_FragCoord.xy + vec2(-1.0, -1.0)) / frameBufSize).a;
-    float lumaNE
-        = texture(buf0, (gl_FragCoord.xy + vec2(1.0, -1.0)) / frameBufSize).a;
-    float lumaSW
-        = texture(buf0, (gl_FragCoord.xy + vec2(-1.0, 1.0)) / frameBufSize).a;
-    float lumaSE
-        = texture(buf0, (gl_FragCoord.xy + vec2(1.0, 1.0)) / frameBufSize).a;
-    float lumaM = texture(buf0, gl_FragCoord.xy).a;
+    float lumaNW = texture(buf0, (gl_FragCoord.xy + vec2(-1.0, -1.0)) / frameBufSize).a;
+    float lumaNE = texture(buf0, (gl_FragCoord.xy + vec2(1.0, -1.0)) / frameBufSize).a;
+    float lumaSW = texture(buf0, (gl_FragCoord.xy + vec2(-1.0, 1.0)) / frameBufSize).a;
+    float lumaSE = texture(buf0, (gl_FragCoord.xy + vec2(1.0, 1.0)) / frameBufSize).a;
+    float lumaM  = texture(buf0, gl_FragCoord.xy).a;
 
     float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));
     float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
@@ -80,8 +75,7 @@ vec4 fastFXAA()
     dir.y = ((lumaNW + lumaSW) - (lumaNE + lumaSE));
 
     float dirReduce
-        = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),
-            FXAA_REDUCE_MIN);
+        = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL), FXAA_REDUCE_MIN);
 
     float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
 
@@ -90,16 +84,12 @@ vec4 fastFXAA()
         / frameBufSize;
 
     vec4 rgbA = (1.0 / 2.0)
-        * (texture(
-               buf0, gl_FragCoord.xy / frameBufSize + dir * (1.0 / 3.0 - 0.5))
-            + texture(buf0,
-                gl_FragCoord.xy / frameBufSize + dir * (2.0 / 3.0 - 0.5)));
+        * (texture(buf0, gl_FragCoord.xy / frameBufSize + dir * (1.0 / 3.0 - 0.5))
+           + texture(buf0, gl_FragCoord.xy / frameBufSize + dir * (2.0 / 3.0 - 0.5)));
     vec4 rgbB = rgbA * (1.0 / 2.0)
         + (1.0 / 4.0)
-            * (texture(buf0,
-                   gl_FragCoord.xy / frameBufSize + dir * (0.0 / 3.0 - 0.5))
-                + texture(buf0,
-                    gl_FragCoord.xy / frameBufSize + dir * (3.0 / 3.0 - 0.5)));
+            * (texture(buf0, gl_FragCoord.xy / frameBufSize + dir * (0.0 / 3.0 - 0.5))
+               + texture(buf0, gl_FragCoord.xy / frameBufSize + dir * (3.0 / 3.0 - 0.5)));
     float lumaB = rgbB.a;
 
     if ((lumaB < lumaMin) || (lumaB > lumaMax)) {
@@ -132,26 +122,25 @@ float getLuma(vec2 coord, float uOffset, float vOffset)
 LumaNeighborhood GetLumaNeighborhood(vec2 uv)
 {
     LumaNeighborhood luma;
-    luma.m = getLuma(uv);
-    luma.n = getLuma(uv, 0.0, 1.0);
-    luma.e = getLuma(uv, 1.0, 0.0);
-    luma.s = getLuma(uv, 0.0, -1.0);
-    luma.w = getLuma(uv, -1.0, 0.0);
+    luma.m  = getLuma(uv);
+    luma.n  = getLuma(uv, 0.0, 1.0);
+    luma.e  = getLuma(uv, 1.0, 0.0);
+    luma.s  = getLuma(uv, 0.0, -1.0);
+    luma.w  = getLuma(uv, -1.0, 0.0);
     luma.ne = getLuma(uv, 1.0, 1.0);
     luma.se = getLuma(uv, 1.0, -1.0);
     luma.sw = getLuma(uv, -1.0, -1.0);
     luma.nw = getLuma(uv, -1.0, 1.0);
 
     luma.highest = max(max(max(max(luma.m, luma.n), luma.e), luma.s), luma.w);
-    luma.lowest = min(min(min(min(luma.m, luma.n), luma.e), luma.s), luma.w);
-    luma.range = luma.highest - luma.lowest;
+    luma.lowest  = min(min(min(min(luma.m, luma.n), luma.e), luma.s), luma.w);
+    luma.range   = luma.highest - luma.lowest;
     return luma;
 }
 
 bool CanSkipFXAA(LumaNeighborhood luma)
 {
-    return luma.range
-        < max(CONTRAST_ABS_THRESHOLD, CONTRAST_REL_THRESHOLD * luma.highest);
+    return luma.range < max(CONTRAST_ABS_THRESHOLD, CONTRAST_REL_THRESHOLD * luma.highest);
 }
 
 bool IsHorizontalEdge(LumaNeighborhood luma)
@@ -172,23 +161,23 @@ FXAAEdge GetFXAAEdge(LumaNeighborhood luma)
     float lumaP, lumaN;
     if (edge.isHorizontal) {
         edge.pixelStep = pixelSize.y;
-        lumaP = luma.n;
-        lumaN = luma.s;
+        lumaP          = luma.n;
+        lumaN          = luma.s;
     } else {
         edge.pixelStep = pixelSize.x;
-        lumaP = luma.e;
-        lumaN = luma.w;
+        lumaP          = luma.e;
+        lumaN          = luma.w;
     }
     float gradientP = abs(lumaP - luma.m);
     float gradientN = abs(lumaN - luma.m);
 
     if (gradientP < gradientN) {
-        edge.pixelStep = -edge.pixelStep;
+        edge.pixelStep    = -edge.pixelStep;
         edge.lumaGradient = gradientN;
-        edge.otherLuma = lumaN;
+        edge.otherLuma    = lumaN;
     } else {
         edge.lumaGradient = gradientP;
-        edge.otherLuma = lumaP;
+        edge.otherLuma    = lumaP;
     }
 
     return edge;
@@ -218,12 +207,12 @@ float GetEdgeBlendFactor(LumaNeighborhood luma, FXAAEdge edge, vec2 uv)
         uvStep.y = pixelSize.y;
     }
 
-    float edgeLuma = 0.5 * (luma.m + edge.otherLuma);
+    float edgeLuma          = 0.5 * (luma.m + edge.otherLuma);
     float gradientThreshold = 0.25 * edge.lumaGradient;
 
-    vec2 uvP = edgeUV + uvStep;
+    vec2 uvP         = edgeUV + uvStep;
     float lumaDeltaP = getLuma(uvP) - edgeLuma;
-    bool atEndP = abs(lumaDeltaP) >= gradientThreshold;
+    bool atEndP      = abs(lumaDeltaP) >= gradientThreshold;
 
     int i;
 #pragma unroll
@@ -232,15 +221,15 @@ float GetEdgeBlendFactor(LumaNeighborhood luma, FXAAEdge edge, vec2 uv)
             break;
         uvP += uvStep * edgeStepSizes[i];
         lumaDeltaP = getLuma(uvP) - edgeLuma;
-        atEndP = abs(lumaDeltaP) >= gradientThreshold;
+        atEndP     = abs(lumaDeltaP) >= gradientThreshold;
     }
     if (!atEndP) {
         uvP += uvStep * LAST_EDGE_STEP_GUESS;
     }
 
-    vec2 uvN = edgeUV - uvStep;
+    vec2 uvN         = edgeUV - uvStep;
     float lumaDeltaN = getLuma(uvN) - edgeLuma;
-    bool atEndN = abs(lumaDeltaN) >= gradientThreshold;
+    bool atEndN      = abs(lumaDeltaN) >= gradientThreshold;
 
 #pragma unroll
     for (i = 0; i < EXTRA_EDGE_STEPS; i++) {
@@ -248,7 +237,7 @@ float GetEdgeBlendFactor(LumaNeighborhood luma, FXAAEdge edge, vec2 uv)
             break;
         uvN -= uvStep * edgeStepSizes[i];
         lumaDeltaN = getLuma(uvN) - edgeLuma;
-        atEndN = abs(lumaDeltaN) >= gradientThreshold;
+        atEndN     = abs(lumaDeltaN) >= gradientThreshold;
     }
     if (!atEndN) {
         uvN -= uvStep * LAST_EDGE_STEP_GUESS;
@@ -267,10 +256,10 @@ float GetEdgeBlendFactor(LumaNeighborhood luma, FXAAEdge edge, vec2 uv)
     bool deltaSign;
     if (distanceToEndP <= distanceToEndN) {
         distanceToNearestEnd = distanceToEndP;
-        deltaSign = lumaDeltaP >= 0;
+        deltaSign            = lumaDeltaP >= 0;
     } else {
         distanceToNearestEnd = distanceToEndN;
-        deltaSign = lumaDeltaN >= 0;
+        deltaSign            = lumaDeltaN >= 0;
     }
 
     if (deltaSign == (luma.m - edgeLuma >= 0)) {
@@ -282,8 +271,8 @@ float GetEdgeBlendFactor(LumaNeighborhood luma, FXAAEdge edge, vec2 uv)
 
 vec4 FXAA()
 {
-    ivec2 center = ivec2(gl_FragCoord.xy);
-    vec2 centerUV = (center + 0.5) * pixelSize;
+    ivec2 center      = ivec2(gl_FragCoord.xy);
+    vec2 centerUV     = (center + 0.5) * pixelSize;
     vec3 center_color = texelFetch(buf0, center, 0).rgb;
 
     LumaNeighborhood luma = GetLumaNeighborhood(centerUV);
@@ -293,8 +282,8 @@ vec4 FXAA()
 
     FXAAEdge edge = GetFXAAEdge(luma);
 
-    float blendFactor = max(
-        GetSubpixelBlendFactor(luma), GetEdgeBlendFactor(luma, edge, centerUV));
+    float blendFactor
+        = max(GetSubpixelBlendFactor(luma), GetEdgeBlendFactor(luma, edge, centerUV));
     vec2 blendUV = centerUV;
     if (edge.isHorizontal) {
         blendUV.y += blendFactor * edge.pixelStep;
