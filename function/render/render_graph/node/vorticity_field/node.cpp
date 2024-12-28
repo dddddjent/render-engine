@@ -133,12 +133,13 @@ void VorticityFieldNode::createPipeline(Configuration& cfg)
         auto rasterization = Pipeline<Param>::rasterizationDefault();
         auto multisample = Pipeline<Param>::multisampleDefault();
 
-        auto vertShaderCode = readFile(cfg.at("shader_directory").get<std::string>() + "/vorticity_field/node.vert.spv");
+        JSON_GET(RenderGraphConfiguration, rg_cfg, cfg, "render_graph");
+        auto vertShaderCode = readFile(rg_cfg.shader_directory + "/vorticity_field/node.vert.spv");
 
         auto frag_shader_path = std::filesystem::path(cfg.at("engine_directory").get<std::string>()) / "function/render/render_graph/node/vorticity_field/node.frag";
         auto filename = frag_shader_path.filename().string();
-        auto generated_path = cfg.at("shader_directory").get<std::string>() + "/vorticity_field/generated/" + filename;
-        auto generated_spv = cfg.at("shader_directory").get<std::string>() + "/vorticity_field/" + (filename + ".spv");
+        auto generated_path = rg_cfg.shader_directory + "/vorticity_field/generated/" + filename;
+        auto generated_spv = rg_cfg.shader_directory + "/vorticity_field/" + (filename + ".spv");
         if (!std::filesystem::exists(std::filesystem::path(generated_path).parent_path())) {
             std::filesystem::create_directories(std::filesystem::path(generated_path).parent_path());
         }

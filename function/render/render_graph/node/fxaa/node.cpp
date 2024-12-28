@@ -107,8 +107,9 @@ void FXAANode::createPipeline(Configuration& cfg)
         auto rasterization = Pipeline<Param>::rasterizationDefault();
         auto multisample = Pipeline<Param>::multisampleDefault();
 
-        auto vertShaderCode = readFile(cfg.at("shader_directory").get<std::string>() + "/fxaa/node.vert.spv");
-        auto fragShaderCode = readFile(cfg.at("shader_directory").get<std::string>() + "/fxaa/node.frag.spv");
+        JSON_GET(RenderGraphConfiguration, rg_cfg, cfg, "render_graph");
+        auto vertShaderCode = readFile(rg_cfg.shader_directory + "/fxaa/node.vert.spv");
+        auto fragShaderCode = readFile(rg_cfg.shader_directory + "/fxaa/node.frag.spv");
         auto vertShaderModule = createShaderModule(g_ctx.vk, vertShaderCode);
         auto fragShaderModule = createShaderModule(g_ctx.vk, fragShaderCode);
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {

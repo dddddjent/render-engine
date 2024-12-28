@@ -1,7 +1,7 @@
 #include "render_engine.h"
+#include "core/tool/logger.h"
 #include "core/vulkan/descriptor_manager.h"
 #include "core/vulkan/vulkan_context.h"
-#include "core/tool/logger.h"
 #include "function/global_context.h"
 #include "function/render/render_graph/graph/graph.h"
 #include "function/resource_manager/resource_manager.h"
@@ -27,16 +27,18 @@ void RenderEngine::init_render(const Configuration& config, GlobalContext* g_ctx
 
 void RenderEngine::initRenderGraph(std::function<void(VkCommandBuffer)> fn)
 {
-    if (config->at("render_graph") == "default") {
+    JSON_GET(RenderGraphConfiguration, render_graph_cfg, (*config), "render_graph");
+
+    if (render_graph_cfg.name == "default") {
         render_graph = std::make_unique<DefaultGraph>();
-    } else if (config->at("render_graph") == "smoke_field") {
+    } else if (render_graph_cfg.name == "smoke_field") {
         render_graph = std::make_unique<SmokeFieldGraph>();
-    } else if (config->at("render_graph") == "fire_field") {
+    } else if (render_graph_cfg.name == "fire_field") {
         render_graph = std::make_unique<FireFieldGraph>();
-    } else if (config->at("render_graph") == "vorticity_field") {
+    } else if (render_graph_cfg.name == "vorticity_field") {
         render_graph = std::make_unique<VorticityFieldGraph>();
     } else {
-        throw std::runtime_error("render graph not found: " + config->at("render_graph").get<std::string>());
+        throw std::runtime_error("render graph not found: " + render_graph_cfg.name);
     }
     render_graph->registerUIRenderfunction(fn);
     render_graph->init(*config);
@@ -109,14 +111,9 @@ void RenderEngine::draw()
     submitInfo.signalSemaphoreCount = 2;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    auto result1 = vkQueueSubmit(g_ctx->vk.queue, 1, &submitInfo, g_ctx->vk.inFlightFences[g_ctx->currentFrame % MAX_FRAMES_IN_FLIGHT]);
-    if (result1 != VK_SUCCESS) {
-        INFO_ALL(std::to_string(result1));
+    if (vkQueueSubmit(g_ctx->vk.queue, 1, &submitInfo, g_ctx->vk.inFlightFences[g_ctx->currentFrame % MAX_FRAMES_IN_FLIGHT]) != VK_SUCCESS) {
         throw std::runtime_error("failed to submit draw command buffer!");
     }
-    // if (vkQueueSubmit(g_ctx->vk.queue, 1, &submitInfo, g_ctx->vk.inFlightFences[g_ctx->currentFrame % MAX_FRAMES_IN_FLIGHT]) != VK_SUCCESS) {
-    //     throw std::runtime_error("failed to submit draw command buffer!");
-    // }
 
     VkSwapchainKHR swapChains[] = { g_ctx->vk.swapChain };
     VkPresentInfoKHR presentInfo {};

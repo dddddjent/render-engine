@@ -9,6 +9,8 @@
 
 using json = nlohmann::json;
 
+using MeshConfiguration = json;
+
 struct TextureConfiguration {
     std::string name;
     std::string path;
@@ -32,8 +34,6 @@ struct ObjectConfiguration {
     std::string material;
 };
 
-using MeshConfiguration = json;
-
 struct LightConfiguration {
     std::array<float, 3> posOrDir;
     std::array<float, 3> intensity;
@@ -44,6 +44,12 @@ struct CameraConfiguration {
     std::array<float, 3> view;
     float fov;
     float move_speed;
+};
+
+struct RenderGraphConfiguration {
+    std::string name;
+    std::string shader_directory;
+    json extra_args;
 };
 
 struct FieldConfiguration {
@@ -152,6 +158,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     view,
     fov,
     move_speed);
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    RenderGraphConfiguration,
+    name,
+    shader_directory,
+    extra_args);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     ObjectConfiguration,
