@@ -15,7 +15,7 @@
 
 enum class FieldDataType : uint32_t {
     CONCENTRATION = 0,
-    TEMPERATURE = 1,
+    TEMPERATURE   = 1,
 };
 
 inline constexpr uint32_t MAX_FIELDS = 2;
@@ -39,7 +39,7 @@ struct Field {
 
     void destroy();
     void init(const FieldConfiguration& cfg);
-    void updateFieldImage(const std::vector<float> &data);
+    void updateFieldImage(const std::vector<float>& data);
 
 private:
     void initFieldImage(const FieldConfiguration& cfg);

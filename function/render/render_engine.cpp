@@ -11,10 +11,10 @@ using namespace Vk;
 
 void RenderEngine::init_core(const Configuration& config)
 {
-    WIDTH = config["width"];
-    HEIGHT = config["height"];
+    WIDTH            = config["width"];
+    HEIGHT           = config["height"];
     base_window_name = config["name"];
-    this->config = &const_cast<Configuration&>(config);
+    this->config     = &const_cast<Configuration&>(config);
 
     initGLFW();
 }
@@ -99,17 +99,17 @@ void RenderEngine::draw()
     if (g_ctx->currentFrame != 0)
         waitStages.emplace_back(VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
     submitInfo.waitSemaphoreCount = waitSemaphores.size();
-    submitInfo.pWaitSemaphores = waitSemaphores.data();
-    submitInfo.pWaitDstStageMask = waitStages.data();
+    submitInfo.pWaitSemaphores    = waitSemaphores.data();
+    submitInfo.pWaitDstStageMask  = waitStages.data();
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &g_ctx->vk.commandBuffer;
+    submitInfo.pCommandBuffers    = &g_ctx->vk.commandBuffer;
 
     VkSemaphore signalSemaphores[] = {
         g_ctx->vk.renderFinishedSemaphores[g_ctx->currentFrame % MAX_FRAMES_IN_FLIGHT],
         g_ctx->vk.vkUpdateSemaphore
     };
     submitInfo.signalSemaphoreCount = 2;
-    submitInfo.pSignalSemaphores = signalSemaphores;
+    submitInfo.pSignalSemaphores    = signalSemaphores;
 
     if (vkQueueSubmit(g_ctx->vk.queue, 1, &submitInfo, g_ctx->vk.inFlightFences[g_ctx->currentFrame % MAX_FRAMES_IN_FLIGHT]) != VK_SUCCESS) {
         throw std::runtime_error("failed to submit draw command buffer!");
@@ -117,13 +117,13 @@ void RenderEngine::draw()
 
     VkSwapchainKHR swapChains[] = { g_ctx->vk.swapChain };
     VkPresentInfoKHR presentInfo {};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = signalSemaphores;
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = swapChains;
-    presentInfo.pImageIndices = &swapchain_index;
-    result = vkQueuePresentKHR(g_ctx->vk.presentQueue, &presentInfo);
+    presentInfo.pWaitSemaphores    = signalSemaphores;
+    presentInfo.swapchainCount     = 1;
+    presentInfo.pSwapchains        = swapChains;
+    presentInfo.pImageIndices      = &swapchain_index;
+    result                         = vkQueuePresentKHR(g_ctx->vk.presentQueue, &presentInfo);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
         framebufferResized = false;
@@ -140,17 +140,17 @@ void RenderEngine::registerImGui(std::function<void(VkCommandBuffer)> fn)
 
 void* RenderEngine::toUI()
 {
-    vk2im = std::make_unique<Vk2ImGui>();
-    vk2im->window = window;
-    vk2im->instance = g_ctx->vk.instance;
+    vk2im                 = std::make_unique<Vk2ImGui>();
+    vk2im->window         = window;
+    vk2im->instance       = g_ctx->vk.instance;
     vk2im->physicalDevice = g_ctx->vk.physicalDevice;
-    vk2im->device = g_ctx->vk.device;
+    vk2im->device         = g_ctx->vk.device;
     vk2im->descriptorPool = g_ctx->dm.uiPool;
-    vk2im->renderPass = render_graph->getUIRenderpass();
-    vk2im->subpass = 0;
-    vk2im->image_count = 2; // imgui requires it to be >= 2
-    vk2im->queue = g_ctx->vk.queue;
-    vk2im->queueFamily = g_ctx->vk.queueFamilyIndices.graphicsFamily.value();
+    vk2im->renderPass     = render_graph->getUIRenderpass();
+    vk2im->subpass        = 0;
+    vk2im->image_count    = 2; // imgui requires it to be >= 2
+    vk2im->queue          = g_ctx->vk.queue;
+    vk2im->queueFamily    = g_ctx->vk.queueFamilyIndices.graphicsFamily.value();
     return (void*)vk2im.get();
 }
 
@@ -166,7 +166,7 @@ void RenderEngine::sync()
 
 void RenderEngine::framebufferResizeCallback(GLFWwindow* window, int width, int height)
 {
-    auto re = reinterpret_cast<RenderEngine*>(glfwGetWindowUserPointer(window));
+    auto re                = reinterpret_cast<RenderEngine*>(glfwGetWindowUserPointer(window));
     re->framebufferResized = true;
 }
 

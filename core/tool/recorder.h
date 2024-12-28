@@ -46,5 +46,5 @@ private:
     OutputStream ost;
 
     int64_t bit_rate = 0;
-    int frame_rate = 0;
+    int frame_rate   = 0;
 };

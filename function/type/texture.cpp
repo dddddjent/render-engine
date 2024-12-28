@@ -20,7 +20,7 @@ Texture Texture::fromConfiguration(const TextureConfiguration& config)
     texture.name = config.name;
 
     const auto extension = std::filesystem::path(config.path).extension().string();
-    texture.image = loadExternalImage(config.path);
+    texture.image        = loadExternalImage(config.path);
     g_ctx.dm.registerResource(texture.image, DescriptorType::CombinedImageSampler);
 
     return texture;
@@ -30,7 +30,7 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
 {
     using namespace boost::gil;
 
-    auto width = 0;
+    auto width  = 0;
     auto height = 0;
     VkFormat format {};
     VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -55,13 +55,13 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
         ERROR_ALL("Failed to load image: " + std::string(e.what()));
     }
     auto boost_image_view = view(boost_image);
-    uint8_t* ptr = nullptr;
+    uint8_t* ptr          = nullptr;
     std::vector<uint8_t> extra_converted_buffer;
     boost::variant2::visit([&](auto&& view) {
         using ViewType = std::decay_t<decltype(view)>;
-        width = view.width();
-        height = view.height();
-        ptr = reinterpret_cast<uint8_t*>(interleaved_view_get_raw_data(view));
+        width          = view.width();
+        height         = view.height();
+        ptr            = reinterpret_cast<uint8_t*>(interleaved_view_get_raw_data(view));
 
         if constexpr (std::is_same_v<ViewType, gray8_view_t>) {
             format = VK_FORMAT_R8_UNORM;
@@ -73,8 +73,8 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
             format = VK_FORMAT_R8G8B8A8_UNORM; // vulkan doesn't support 3 bytes formats
             extra_converted_buffer.resize(width * height * 4);
             auto rgba_view = interleaved_view(width, height,
-                reinterpret_cast<rgba8_pixel_t*>(extra_converted_buffer.data()),
-                width * sizeof(rgba8_pixel_t));
+                                              reinterpret_cast<rgba8_pixel_t*>(extra_converted_buffer.data()),
+                                              width * sizeof(rgba8_pixel_t));
             copy_and_convert_pixels(view, rgba_view);
             ptr = reinterpret_cast<uint8_t*>(interleaved_view_get_raw_data(rgba_view));
         } else if constexpr (std::is_same_v<ViewType, rgb16_view_t>) {
@@ -95,7 +95,7 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
             assert(false);
         }
     },
-        boost_image_view);
+                           boost_image_view);
 
     const auto extent = VkExtent3D {
         static_cast<uint32_t>(width),
@@ -115,8 +115,8 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
         tiling);
     image.Update(g_ctx.vk, ptr);
     image.AddSampler(g_ctx.vk,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
+                     VK_FILTER_LINEAR,
+                     std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
     image.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     return image;
@@ -125,12 +125,12 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
 Texture Texture::loadDefaultColorTexture()
 {
     Texture texture;
-    texture.name = "default_color";
+    texture.name              = "default_color";
     std::vector<float> colors = {
         1.0f, 1.0f, 1.0f, 1.0f
     };
     const auto extent = VkExtent3D { 1, 1, 1 };
-    texture.image = Image::New(
+    texture.image     = Image::New(
         g_ctx.vk,
         VK_FORMAT_R32G32B32A32_SFLOAT,
         extent,
@@ -142,8 +142,8 @@ Texture Texture::loadDefaultColorTexture()
         VK_IMAGE_TILING_LINEAR);
     texture.image.Update(g_ctx.vk, colors.data());
     texture.image.AddSampler(g_ctx.vk,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
+                             VK_FILTER_LINEAR,
+                             std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
     texture.image.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     g_ctx.dm.registerResource(texture.image, DescriptorType::CombinedImageSampler);
     return texture;
@@ -152,12 +152,12 @@ Texture Texture::loadDefaultColorTexture()
 Texture Texture::loadDefaultMetallicTexture()
 {
     Texture texture;
-    texture.name = "default_metallic";
+    texture.name                = "default_metallic";
     std::vector<float> metallic = {
         1.0f
     };
     const auto extent = VkExtent3D { 1, 1, 1 };
-    texture.image = Image::New(
+    texture.image     = Image::New(
         g_ctx.vk,
         VK_FORMAT_R32_SFLOAT,
         extent,
@@ -169,8 +169,8 @@ Texture Texture::loadDefaultMetallicTexture()
         VK_IMAGE_TILING_OPTIMAL);
     texture.image.Update(g_ctx.vk, metallic.data());
     texture.image.AddSampler(g_ctx.vk,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
+                             VK_FILTER_LINEAR,
+                             std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
     texture.image.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     g_ctx.dm.registerResource(texture.image, DescriptorType::CombinedImageSampler);
     return texture;
@@ -179,12 +179,12 @@ Texture Texture::loadDefaultMetallicTexture()
 Texture Texture::loadDefaultRoughnessTexture()
 {
     Texture texture;
-    texture.name = "default_roughness";
+    texture.name                 = "default_roughness";
     std::vector<float> roughness = {
         1.0f
     };
     const auto extent = VkExtent3D { 1, 1, 1 };
-    texture.image = Image::New(
+    texture.image     = Image::New(
         g_ctx.vk,
         VK_FORMAT_R32_SFLOAT,
         extent,
@@ -196,8 +196,8 @@ Texture Texture::loadDefaultRoughnessTexture()
         VK_IMAGE_TILING_OPTIMAL);
     texture.image.Update(g_ctx.vk, roughness.data());
     texture.image.AddSampler(g_ctx.vk,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
+                             VK_FILTER_LINEAR,
+                             std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
     texture.image.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     g_ctx.dm.registerResource(texture.image, DescriptorType::CombinedImageSampler);
     return texture;
@@ -206,12 +206,12 @@ Texture Texture::loadDefaultRoughnessTexture()
 Texture Texture::loadDefaultNormalTexture()
 {
     Texture texture;
-    texture.name = "default_normal";
+    texture.name              = "default_normal";
     std::vector<float> normal = {
         0.5f, 0.5f, 1.0f, 0.0f
     };
     const auto extent = VkExtent3D { 1, 1, 1 };
-    texture.image = Image::New(
+    texture.image     = Image::New(
         g_ctx.vk,
         VK_FORMAT_R32G32B32A32_SFLOAT,
         extent,
@@ -223,8 +223,8 @@ Texture Texture::loadDefaultNormalTexture()
         VK_IMAGE_TILING_OPTIMAL);
     texture.image.Update(g_ctx.vk, normal.data());
     texture.image.AddSampler(g_ctx.vk,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
+                             VK_FILTER_LINEAR,
+                             std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
     texture.image.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     g_ctx.dm.registerResource(texture.image, DescriptorType::CombinedImageSampler);
     return texture;
@@ -233,12 +233,12 @@ Texture Texture::loadDefaultNormalTexture()
 Texture Texture::loadDefaultAoTexture()
 {
     Texture texture;
-    texture.name = "default_ao";
+    texture.name          = "default_ao";
     std::vector<float> ao = {
         1.0f, 1.0f, 1.0f, 1.0f
     };
     const auto extent = VkExtent3D { 1, 1, 1 };
-    texture.image = Image::New(
+    texture.image     = Image::New(
         g_ctx.vk,
         VK_FORMAT_R32G32B32A32_SFLOAT,
         extent,
@@ -250,8 +250,8 @@ Texture Texture::loadDefaultAoTexture()
         VK_IMAGE_TILING_OPTIMAL);
     texture.image.Update(g_ctx.vk, ao.data());
     texture.image.AddSampler(g_ctx.vk,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
+                             VK_FILTER_LINEAR,
+                             std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_REPEAT));
     texture.image.TransitionLayoutSingleTime(g_ctx.vk, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     g_ctx.dm.registerResource(texture.image, DescriptorType::CombinedImageSampler);
     return texture;

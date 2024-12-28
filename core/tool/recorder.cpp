@@ -20,8 +20,8 @@ void Recorder::init(const Configuration& cfg)
 
     JSON_GET(RecorderConfiguration, recorder_config, cfg, "recorder");
 
-    bit_rate = recorder_config.bit_rate;
-    frame_rate = recorder_config.frame_rate;
+    bit_rate     = recorder_config.bit_rate;
+    frame_rate   = recorder_config.frame_rate;
     is_recording = recorder_config.record_from_start;
     if (is_recording) {
         begin(recorder_config.output_path, cfg["width"], cfg["height"]);
@@ -57,15 +57,15 @@ void Recorder::begin_ffmpeg(const std::filesystem::path& path, uint32_t width, u
             throw std::runtime_error("Could not allocate codec context");
             return;
         }
-        ost.codec_ctx->codec_id = fmt_ctx->oformat->video_codec;
-        ost.codec_ctx->bit_rate = bit_rate;
-        ost.codec_ctx->width = width;
-        ost.codec_ctx->height = height;
-        ost.codec_ctx->time_base = { 1, frame_rate };
-        ost.codec_ctx->framerate = { frame_rate, 1 };
-        ost.codec_ctx->gop_size = 10;
+        ost.codec_ctx->codec_id     = fmt_ctx->oformat->video_codec;
+        ost.codec_ctx->bit_rate     = bit_rate;
+        ost.codec_ctx->width        = width;
+        ost.codec_ctx->height       = height;
+        ost.codec_ctx->time_base    = { 1, frame_rate };
+        ost.codec_ctx->framerate    = { frame_rate, 1 };
+        ost.codec_ctx->gop_size     = 10;
         ost.codec_ctx->max_b_frames = 1;
-        ost.codec_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+        ost.codec_ctx->pix_fmt      = AV_PIX_FMT_YUV420P;
 
         if (codec->id == AV_CODEC_ID_H264) {
             av_opt_set(ost.codec_ctx->priv_data, "preset", "slow", 0);
@@ -92,7 +92,7 @@ void Recorder::begin_ffmpeg(const std::filesystem::path& path, uint32_t width, u
             return;
         }
         ost.stream->id = fmt_ctx->nb_streams - 1;
-        ret = avcodec_parameters_from_context(ost.stream->codecpar, ost.codec_ctx);
+        ret            = avcodec_parameters_from_context(ost.stream->codecpar, ost.codec_ctx);
         if (ret < 0) {
             CRITICAL_FILE("Could not copy codec parameters, error: {}", av_err2str(ret));
             throw std::runtime_error("Could not copy codec parameters");
@@ -101,13 +101,13 @@ void Recorder::begin_ffmpeg(const std::filesystem::path& path, uint32_t width, u
     }
 
     ost.packet = av_packet_alloc();
-    ost.frame = av_frame_alloc();
+    ost.frame  = av_frame_alloc();
     {
         ost.frame->format = ost.codec_ctx->pix_fmt;
-        ost.frame->width = ost.codec_ctx->width;
+        ost.frame->width  = ost.codec_ctx->width;
         ost.frame->height = ost.codec_ctx->height;
-        ost.frame->pts = 0;
-        ret = av_frame_get_buffer(ost.frame, 0);
+        ost.frame->pts    = 0;
+        ret               = av_frame_get_buffer(ost.frame, 0);
         if (ret < 0) {
             CRITICAL_FILE("Could not allocate frame buffer, error: {}", av_err2str(ret));
             throw std::runtime_error("Could not allocate frame buffer");
@@ -117,10 +117,10 @@ void Recorder::begin_ffmpeg(const std::filesystem::path& path, uint32_t width, u
     ost.rgb_frame = av_frame_alloc();
     {
         ost.rgb_frame->format = AV_PIX_FMT_BGRA;
-        ost.rgb_frame->width = ost.codec_ctx->width;
+        ost.rgb_frame->width  = ost.codec_ctx->width;
         ost.rgb_frame->height = ost.codec_ctx->height;
-        ost.rgb_frame->pts = 0;
-        ret = av_frame_get_buffer(ost.rgb_frame, 0);
+        ost.rgb_frame->pts    = 0;
+        ret                   = av_frame_get_buffer(ost.rgb_frame, 0);
         if (ret < 0) {
             CRITICAL_FILE("Could not allocate frame buffer, error: {}", av_err2str(ret));
             throw std::runtime_error("Could not allocate frame buffer");
@@ -206,8 +206,8 @@ void Recorder::fill_rgb(AVFrame* frame, uint8_t* data, size_t width, size_t heig
     //! linesize[0] != width * 4, because of padding
     for (int y = 0; y < height; y++) {
         memcpy(frame->data[0] + y * frame->linesize[0], // Destination row in AVFrame
-            data + y * width * 4, // Source row in BGRA data
-            width * 4); // Number of bytes to copy per row
+               data + y * width * 4, // Source row in BGRA data
+               width * 4); // Number of bytes to copy per row
     }
 }
 

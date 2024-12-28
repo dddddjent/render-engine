@@ -10,10 +10,10 @@ void CudaEngine::importExtBuffer(const ExtBufferDesc& buffer_desc)
     cudaExternalMemoryHandleDesc externalMemoryDesc = {};
     {
 #ifdef _WIN64
-        externalMemoryDesc.type = cudaExternalMemoryHandleTypeOpaqueWin32;
+        externalMemoryDesc.type                = cudaExternalMemoryHandleTypeOpaqueWin32;
         externalMemoryDesc.handle.win32.handle = buffer_desc.handle; // File descriptor from Vulkan
 #else
-        externalMemoryDesc.type = cudaExternalMemoryHandleTypeOpaqueFd;
+        externalMemoryDesc.type      = cudaExternalMemoryHandleTypeOpaqueFd;
         externalMemoryDesc.handle.fd = buffer_desc.fd; // File descriptor from Vulkan
 #endif
 
@@ -25,7 +25,7 @@ void CudaEngine::importExtBuffer(const ExtBufferDesc& buffer_desc)
     cudaExternalMemoryBufferDesc bufferDesc = {};
     {
         bufferDesc.offset = 0;
-        bufferDesc.size = buffer_desc.buffer_size;
+        bufferDesc.size   = buffer_desc.buffer_size;
     }
     void* dev_ptr;
     cudaExternalMemoryGetMappedBuffer(&dev_ptr, ext_mem, &bufferDesc);
@@ -40,15 +40,15 @@ void CudaEngine::importExtBuffer(const ExtBufferDesc& buffer_desc)
 void CudaEngine::importExtImage(const ExtImageDesc& image_desc)
 {
     assert(image_desc.width * image_desc.height * image_desc.depth
-        == image_desc.image_size / image_desc.element_size);
+           == image_desc.image_size / image_desc.element_size);
 
     cudaExternalMemoryHandleDesc externalMemoryDesc = {};
     {
 #ifdef _WIN64
-        externalMemoryDesc.type = cudaExternalMemoryHandleTypeOpaqueWin32;
+        externalMemoryDesc.type                = cudaExternalMemoryHandleTypeOpaqueWin32;
         externalMemoryDesc.handle.win32.handle = image_desc.handle; // File descriptor from Vulkan
 #else
-        externalMemoryDesc.type = cudaExternalMemoryHandleTypeOpaqueFd;
+        externalMemoryDesc.type      = cudaExternalMemoryHandleTypeOpaqueFd;
         externalMemoryDesc.handle.fd = image_desc.fd; // File descriptor from Vulkan
 #endif
     }
@@ -68,11 +68,11 @@ void CudaEngine::importExtImage(const ExtImageDesc& image_desc)
     cudaExternalMemoryMipmappedArrayDesc ext_mipmapped_arr_desc;
     {
         memset(&ext_mipmapped_arr_desc, 0, sizeof(ext_mipmapped_arr_desc));
-        ext_mipmapped_arr_desc.offset = 0;
+        ext_mipmapped_arr_desc.offset     = 0;
         ext_mipmapped_arr_desc.formatDesc = formatDesc;
-        ext_mipmapped_arr_desc.extent = extent;
-        ext_mipmapped_arr_desc.flags = 0;
-        ext_mipmapped_arr_desc.numLevels = 1;
+        ext_mipmapped_arr_desc.extent     = extent;
+        ext_mipmapped_arr_desc.flags      = 0;
+        ext_mipmapped_arr_desc.numLevels  = 1;
     }
     cudaMipmappedArray_t mipmapped_arr;
     cudaExternalMemoryGetMappedMipmappedArray(&mipmapped_arr, ext_mem, &ext_mipmapped_arr_desc);
@@ -82,7 +82,7 @@ void CudaEngine::importExtImage(const ExtImageDesc& image_desc)
 
     cudaResourceDesc res_desc = {};
     {
-        res_desc.resType = cudaResourceTypeArray;
+        res_desc.resType         = cudaResourceTypeArray;
         res_desc.res.array.array = arr_0;
     }
     cudaSurfaceObject_t surface_object;
@@ -107,10 +107,10 @@ void CudaEngine::initSemaphore()
     cudaExternalSemaphoreHandleDesc externalSemaphoreHandleDesc;
     memset(&externalSemaphoreHandleDesc, 0, sizeof(externalSemaphoreHandleDesc));
 #ifdef _WIN64
-    externalSemaphoreHandleDesc.type = cudaExternalSemaphoreHandleTypeOpaqueWin32;
+    externalSemaphoreHandleDesc.type                = cudaExternalSemaphoreHandleTypeOpaqueWin32;
     externalSemaphoreHandleDesc.handle.win32.handle = g_ctx->vk.cuUpdateSemaphoreHandle;
 #else
-    externalSemaphoreHandleDesc.type = cudaExternalSemaphoreHandleTypeOpaqueFd;
+    externalSemaphoreHandleDesc.type      = cudaExternalSemaphoreHandleTypeOpaqueFd;
     externalSemaphoreHandleDesc.handle.fd = g_ctx->vk.cuUpdateSemaphoreFd;
 #endif
     externalSemaphoreHandleDesc.flags = 0;
@@ -118,10 +118,10 @@ void CudaEngine::initSemaphore()
 
     memset(&externalSemaphoreHandleDesc, 0, sizeof(externalSemaphoreHandleDesc));
 #ifdef _WIN64
-    externalSemaphoreHandleDesc.type = cudaExternalSemaphoreHandleTypeOpaqueWin32;
+    externalSemaphoreHandleDesc.type                = cudaExternalSemaphoreHandleTypeOpaqueWin32;
     externalSemaphoreHandleDesc.handle.win32.handle = g_ctx->vk.vkUpdateSemaphoreHandle;
 #else
-    externalSemaphoreHandleDesc.type = cudaExternalSemaphoreHandleTypeOpaqueFd;
+    externalSemaphoreHandleDesc.type      = cudaExternalSemaphoreHandleTypeOpaqueFd;
     externalSemaphoreHandleDesc.handle.fd = g_ctx->vk.vkUpdateSemaphoreFd;
 #endif
     externalSemaphoreHandleDesc.flags = 0;
@@ -136,10 +136,10 @@ void CudaEngine::init(Configuration& cfg, GlobalContext* g_ctx)
     initSemaphore();
     initExternalMem();
     JSON_GET(DriverConfiguration, driver_cfg, cfg, "driver")
-    total_frame = driver_cfg.total_frame;
-    frame_rate = driver_cfg.frame_rate;
+    total_frame     = driver_cfg.total_frame;
+    frame_rate      = driver_cfg.frame_rate;
     steps_per_frame = driver_cfg.steps_per_frame;
-    current_frame = 0;
+    current_frame   = 0;
 }
 
 void CudaEngine::step()
@@ -173,7 +173,7 @@ void CudaEngine::waitOnSemaphore(cudaExternalSemaphore_t& semaphore)
     cudaExternalSemaphoreWaitParams extSemaphoreWaitParams;
     memset(&extSemaphoreWaitParams, 0, sizeof(extSemaphoreWaitParams));
     extSemaphoreWaitParams.params.fence.value = 0;
-    extSemaphoreWaitParams.flags = 0;
+    extSemaphoreWaitParams.flags              = 0;
 
     cudaWaitExternalSemaphoresAsync(
         &semaphore, &extSemaphoreWaitParams, 1, streamToRun);
@@ -184,7 +184,7 @@ void CudaEngine::signalSemaphore(cudaExternalSemaphore_t& semaphore)
     cudaExternalSemaphoreSignalParams extSemaphoreSignalParams;
     memset(&extSemaphoreSignalParams, 0, sizeof(extSemaphoreSignalParams));
     extSemaphoreSignalParams.params.fence.value = 0;
-    extSemaphoreSignalParams.flags = 0;
+    extSemaphoreSignalParams.flags              = 0;
 
     cudaSignalExternalSemaphoresAsync(
         &semaphore, &extSemaphoreSignalParams, 1, streamToRun);

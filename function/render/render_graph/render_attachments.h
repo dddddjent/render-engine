@@ -6,8 +6,8 @@
 #include <unordered_map>
 
 enum class RenderAttachmentType : uint8_t {
-    Color = 1 << 0,
-    Depth = 1 << 1,
+    Color   = 1 << 0,
+    Depth   = 1 << 1,
     Sampler = 1 << 2,
 };
 DEFINE_ENUM_BIT_OPERATORS(RenderAttachmentType)

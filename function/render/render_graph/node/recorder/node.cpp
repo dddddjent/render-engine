@@ -8,7 +8,7 @@ using namespace Vk;
 Record::Record(const std::string& name, const std::string& color_buf_name)
     : RenderGraphNode(name)
 {
-    bool is_swapchain = color_buf_name == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME();
+    bool is_swapchain       = color_buf_name == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME();
     attachment_descriptions = {
         {
             "color",

@@ -21,7 +21,7 @@ struct GlobalContext {
     Vk::DescriptorManager dm;
     std::unique_ptr<ResourceManager> rm;
 
-    float frame_time = 0.0f;
+    float frame_time      = 0.0f;
     uint32_t currentFrame = 0;
 
     bool continue_to_run = true;

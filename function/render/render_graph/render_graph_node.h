@@ -27,9 +27,9 @@ public:
     virtual ~RenderGraphNode() = default;
 
     virtual void init(Configuration& cfg, RenderAttachments& attachments) = 0;
-    virtual void record(uint32_t swapchain_index) = 0;
-    virtual void onResize() = 0;
-    virtual void destroy() = 0;
+    virtual void record(uint32_t swapchain_index)                         = 0;
+    virtual void onResize()                                               = 0;
+    virtual void destroy()                                                = 0;
 
     std::string name;
     std::unordered_map<std::string, RenderAttachmentDescription> attachment_descriptions;

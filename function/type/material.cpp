@@ -1,6 +1,6 @@
 #include "material.h"
-#include "core/tool/logger.h"
 #include "core/math/math.h"
+#include "core/tool/logger.h"
 #include "function/global_context.h"
 #include "function/resource_manager/resource_manager.h"
 
@@ -21,10 +21,10 @@ Material Material::fromConfiguration(const MaterialConfiguration& config)
 {
     Material material;
 
-    material.name = config.name;
-    material.data.roughness = config.roughness;
-    material.data.metallic = config.metallic;
-    material.data.color = arrayToVec3(config.color);
+    material.name               = config.name;
+    material.data.roughness     = config.roughness;
+    material.data.metallic      = config.metallic;
+    material.data.color         = arrayToVec3(config.color);
     material.data.color_texture = g_ctx.dm.getResourceHandle(
         g_ctx.rm->textures[config.color_texture].image.id);
     material.data.metallic_texture = g_ctx.dm.getResourceHandle(

@@ -4,16 +4,16 @@
 #include <function/resource_manager/resource_manager.h>
 
 void Engine::init(Configuration& config,
-        RenderEngine* render_engine, UIEngine* ui_engine, PhysicsEngine* physics_engine,
-        std::vector<std::unique_ptr<Script>> &&scripts)
+                  RenderEngine* render_engine, UIEngine* ui_engine, PhysicsEngine* physics_engine,
+                  std::vector<std::unique_ptr<Script>>&& scripts)
 {
     logger.init(config);
     INFO_ALL("Initializing the engine...");
 
-    this->render_engine = render_engine;
-    this->ui_engine = ui_engine;
+    this->render_engine  = render_engine;
+    this->ui_engine      = ui_engine;
     this->physics_engine = physics_engine;
-    this->scripts = std::move(scripts);
+    this->scripts        = std::move(scripts);
 
     render_engine->init_core(config);
     window = render_engine->getGLFWWindow();
@@ -24,7 +24,7 @@ void Engine::init(Configuration& config,
 
     ui_engine->init(config, render_engine->toUI()); // get renderpass from render graph
 
-    for(auto &script : this->scripts) {
+    for (auto& script : this->scripts) {
         script->init();
     }
 
@@ -33,7 +33,7 @@ void Engine::init(Configuration& config,
 
 void Engine::update_frame_time()
 {
-    float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - currentTime).count();
+    float deltaTime  = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - currentTime).count();
     g_ctx.frame_time = deltaTime;
 
     currentTime = std::chrono::high_resolution_clock::now();
@@ -51,14 +51,14 @@ void Engine::run()
         ui_engine->handleInput();
         render_engine->render();
         physics_engine->step();
-        
-        for(auto &script : scripts) {
+
+        for (auto& script : scripts) {
             script->step(g_ctx.frame_time);
         }
 
         INFO_FILE("Engine loop ended");
 
-        if(g_ctx.continue_to_run == false)
+        if (g_ctx.continue_to_run == false)
             break;
 
         g_ctx.currentFrame++;
@@ -71,8 +71,8 @@ void Engine::cleanup()
 
     render_engine->sync();
     physics_engine->sync();
-    
-    for(auto &script : scripts) {
+
+    for (auto& script : scripts) {
         script->destroy();
     }
 

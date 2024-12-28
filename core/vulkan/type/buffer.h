@@ -12,11 +12,11 @@ struct Buffer {
     ~Buffer();
 
     static Buffer New(const Vk::Context& ctx,
-        VkDeviceSize size,
-        VkBufferUsageFlags usage,
-        VkMemoryPropertyFlags properties,
-        bool cpu_mapped = false,
-        bool external = false);
+                      VkDeviceSize size,
+                      VkBufferUsageFlags usage,
+                      VkMemoryPropertyFlags properties,
+                      bool cpu_mapped = false,
+                      bool external   = false);
     static void Delete(const Vk::Context& ctx, Buffer& b);
     void CreateUUID();
     void Update(const Context& ctx, const void* data, size_t size, size_t offset = 0);
@@ -30,8 +30,8 @@ struct Buffer {
         const Context& ctx,
         Image& dst,
         const VkExtent3D& extent,
-        uint32_t mipLevel = 0,
-        size_t srcOffset = 0,
+        uint32_t mipLevel           = 0,
+        size_t srcOffset            = 0,
         const VkOffset3D& dstOffset = { 0, 0, 0 }) const;
     // No need to submit command buffer
     void CopyToSingleTime(
@@ -45,8 +45,8 @@ struct Buffer {
         const Context& ctx,
         Image& dst,
         const VkExtent3D& extent,
-        uint32_t mipLevel = 0,
-        size_t srcOffset = 0,
+        uint32_t mipLevel           = 0,
+        size_t srcOffset            = 0,
         const VkOffset3D& dstOffset = { 0, 0, 0 }) const;
 
     uuid::UUID id = uuid::nil_uuid();

@@ -68,13 +68,13 @@ void Mesh::initBuffersFromData()
 Mesh Mesh::sphereMesh(MeshConfiguration& config)
 {
     Mesh mesh;
-    glm::vec3 pos = arrayToVec3(config.at("pos").get<std::vector<float>>());
-    float radius = config.at("radius").get<float>();
+    glm::vec3 pos    = arrayToVec3(config.at("pos").get<std::vector<float>>());
+    float radius     = config.at("radius").get<float>();
     int tessellation = config.at("tessellation").get<int>();
 
     auto [vertices, indices] = GeometryGenerator::sphere(pos, radius, tessellation);
-    mesh.data.vertices = std::move(vertices);
-    mesh.data.indices = std::move(indices);
+    mesh.data.vertices       = std::move(vertices);
+    mesh.data.indices        = std::move(indices);
     // mesh.calculateTangents();
 
     mesh.initBuffersFromData();
@@ -85,12 +85,12 @@ Mesh Mesh::sphereMesh(MeshConfiguration& config)
 Mesh Mesh::cubeMesh(MeshConfiguration& config)
 {
     Mesh mesh;
-    glm::vec3 pos = arrayToVec3(config.at("pos").get<std::vector<float>>());
+    glm::vec3 pos   = arrayToVec3(config.at("pos").get<std::vector<float>>());
     glm::vec3 scale = arrayToVec3(config.at("scale").get<std::vector<float>>());
 
     auto [vertices, indices] = GeometryGenerator::cube(pos, scale);
-    mesh.data.vertices = std::move(vertices);
-    mesh.data.indices = std::move(indices);
+    mesh.data.vertices       = std::move(vertices);
+    mesh.data.indices        = std::move(indices);
     mesh.calculateTangents();
 
     mesh.initBuffersFromData();
@@ -101,13 +101,13 @@ Mesh Mesh::cubeMesh(MeshConfiguration& config)
 Mesh Mesh::planeMesh(MeshConfiguration& config)
 {
     Mesh mesh;
-    glm::vec3 pos = arrayToVec3(config.at("pos").get<std::vector<float>>());
-    glm::vec3 normal = arrayToVec3(config.at("normal").get<std::vector<float>>());
+    glm::vec3 pos           = arrayToVec3(config.at("pos").get<std::vector<float>>());
+    glm::vec3 normal        = arrayToVec3(config.at("normal").get<std::vector<float>>());
     std::vector<float> size = config.at("size").get<std::vector<float>>();
 
     auto [vertices, indices] = GeometryGenerator::plane(pos, normal, size);
-    mesh.data.vertices = std::move(vertices);
-    mesh.data.indices = std::move(indices);
+    mesh.data.vertices       = std::move(vertices);
+    mesh.data.indices        = std::move(indices);
     mesh.calculateTangents();
 
     mesh.initBuffersFromData();
@@ -175,19 +175,19 @@ glm::vec3 Mesh::computeTangent(
     const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3,
     const glm::vec2& uv1, const glm::vec2& uv2, const glm::vec2& uv3)
 {
-    glm::vec3 edge1 = p2 - p1;
-    glm::vec3 edge2 = p3 - p1;
+    glm::vec3 edge1    = p2 - p1;
+    glm::vec3 edge2    = p3 - p1;
     glm::vec2 deltaUV1 = uv2 - uv1;
     glm::vec2 deltaUV2 = uv3 - uv1;
 
     if ((deltaUV1.x == 0.0f && deltaUV2.x == 0.0f)
         || (deltaUV1.y == 0.0f && deltaUV2.y == 0.0f)) {
         auto t1 = glm::normalize(edge1);
-        auto n = glm::normalize(glm::cross(edge1, edge2));
+        auto n  = glm::normalize(glm::cross(edge1, edge2));
         return glm::normalize(t1 - glm::dot(t1, n) * n);
     }
 
-    float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+    float f           = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
     glm::vec3 tangent = f * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
 
     return glm::normalize(tangent);
@@ -208,9 +208,9 @@ glm::vec3 Mesh::computeFallbackTangent(const glm::vec3& normal)
 void Mesh::calculateTangents()
 {
     for (size_t i = 0; i < data.indices.size(); i += 3) {
-        auto& v0 = data.vertices[data.indices[i + 0]];
-        auto& v1 = data.vertices[data.indices[i + 1]];
-        auto& v2 = data.vertices[data.indices[i + 2]];
+        auto& v0  = data.vertices[data.indices[i + 0]];
+        auto& v1  = data.vertices[data.indices[i + 1]];
+        auto& v2  = data.vertices[data.indices[i + 2]];
         auto& uv0 = v0.uv;
         auto& uv1 = v1.uv;
         auto& uv2 = v2.uv;
@@ -219,7 +219,7 @@ void Mesh::calculateTangents()
         if (glm::isnan(t).x == true or glm::isnan(t).y == true or glm::isnan(t).z == true) {
             auto normal = glm::normalize(glm::cross(
                 v1.pos - v0.pos, v2.pos - v0.pos));
-            t = computeFallbackTangent(normal);
+            t           = computeFallbackTangent(normal);
         }
         v0.tangent += t;
         v1.tangent += t;
@@ -229,7 +229,7 @@ void Mesh::calculateTangents()
     for (auto& vertex : data.vertices) {
         assert(glm::length(vertex.tangent) > 0.0f);
         vertex.tangent = glm::normalize(vertex.tangent
-            - vertex.normal * glm::dot(vertex.normal, vertex.tangent));
+                                        - vertex.normal * glm::dot(vertex.normal, vertex.tangent));
     }
 }
 

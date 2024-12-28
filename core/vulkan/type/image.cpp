@@ -4,28 +4,28 @@
 #include "core/vulkan/vulkan_util.h"
 
 namespace Vk {
-Image::Image() = default;
+Image::Image()  = default;
 Image::~Image() = default;
 
 Image Image::New(const Context& ctx,
-    VkFormat format,
-    VkExtent3D extent,
-    VkImageUsageFlags usage,
-    VkImageAspectFlags aspectFlags,
-    VkMemoryPropertyFlags properties,
-    uint32_t mipLevels,
-    bool external,
-    VkImageTiling tiling,
-    VkImageType imageType,
-    VkImageViewType viewType)
+                 VkFormat format,
+                 VkExtent3D extent,
+                 VkImageUsageFlags usage,
+                 VkImageAspectFlags aspectFlags,
+                 VkMemoryPropertyFlags properties,
+                 uint32_t mipLevels,
+                 bool external,
+                 VkImageTiling tiling,
+                 VkImageType imageType,
+                 VkImageViewType viewType)
 {
     Image i;
     i.CreateUUID();
-    i.size = createImage(ctx, extent, format, usage, properties, i.image, i.memory, external, tiling, imageType, mipLevels);
-    i.view = createImageView(ctx, i.image, format, aspectFlags, viewType, mipLevels);
-    i.format = format;
-    i.extent = extent;
-    i.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+    i.size    = createImage(ctx, extent, format, usage, properties, i.image, i.memory, external, tiling, imageType, mipLevels);
+    i.view    = createImageView(ctx, i.image, format, aspectFlags, viewType, mipLevels);
+    i.format  = format;
+    i.extent  = extent;
+    i.layout  = VK_IMAGE_LAYOUT_UNDEFINED;
     i.sampler = VK_NULL_HANDLE;
     return i;
 }
@@ -51,8 +51,8 @@ void Image::TransitionLayoutSingleTime(const Context& ctx, VkImageLayout newLayo
 void Image::AddDefaultSampler(const Context& ctx)
 {
     AddSampler(ctx,
-        VK_FILTER_LINEAR,
-        std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER));
+               VK_FILTER_LINEAR,
+               std::vector<VkSamplerAddressMode>(3, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER));
 }
 
 void Image::AddSampler(const Context& ctx, const VkFilter filter, const std::vector<VkSamplerAddressMode>& addressMode, const VkBorderColor borderColor)
@@ -61,22 +61,22 @@ void Image::AddSampler(const Context& ctx, const VkFilter filter, const std::vec
     VkPhysicalDeviceProperties properties {};
     vkGetPhysicalDeviceProperties(ctx.physicalDevice, &properties);
     VkSamplerCreateInfo sampler_info {};
-    sampler_info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    sampler_info.magFilter = filter;
-    sampler_info.minFilter = filter;
-    sampler_info.addressModeU = addressMode[0];
-    sampler_info.addressModeV = addressMode[1];
-    sampler_info.addressModeW = addressMode[2];
-    sampler_info.borderColor = borderColor;
-    sampler_info.anisotropyEnable = VK_TRUE;
-    sampler_info.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+    sampler_info.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    sampler_info.magFilter               = filter;
+    sampler_info.minFilter               = filter;
+    sampler_info.addressModeU            = addressMode[0];
+    sampler_info.addressModeV            = addressMode[1];
+    sampler_info.addressModeW            = addressMode[2];
+    sampler_info.borderColor             = borderColor;
+    sampler_info.anisotropyEnable        = VK_TRUE;
+    sampler_info.maxAnisotropy           = properties.limits.maxSamplerAnisotropy;
     sampler_info.unnormalizedCoordinates = VK_FALSE;
-    sampler_info.compareEnable = VK_FALSE;
-    sampler_info.compareOp = VK_COMPARE_OP_ALWAYS;
-    sampler_info.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    sampler_info.mipLodBias = 0.0f;
-    sampler_info.minLod = 0.0f;
-    sampler_info.maxLod = 0.0f;
+    sampler_info.compareEnable           = VK_FALSE;
+    sampler_info.compareOp               = VK_COMPARE_OP_ALWAYS;
+    sampler_info.mipmapMode              = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    sampler_info.mipLodBias              = 0.0f;
+    sampler_info.minLod                  = 0.0f;
+    sampler_info.maxLod                  = 0.0f;
     if (vkCreateSampler(ctx.device, &sampler_info, nullptr, &sampler) != VK_SUCCESS) {
         throw std::runtime_error("failed to create texture sampler!");
     }

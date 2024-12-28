@@ -9,9 +9,9 @@
 using namespace Vk;
 
 FireFieldNode::FireFieldNode(const std::string& name,
-    const std::string& previous_color,
-    const std::string& previous_depth,
-    const std::string& color_buf_name)
+                             const std::string& previous_color,
+                             const std::string& previous_depth,
+                             const std::string& color_buf_name)
     : RenderGraphNode(name)
 {
     assert(previous_color != RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME());
@@ -71,13 +71,13 @@ void FireFieldNode::createFramebuffer()
         };
 
         VkFramebufferCreateInfo framebufferInfo {};
-        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = render_pass;
+        framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass      = render_pass;
         framebufferInfo.attachmentCount = static_cast<uint32_t>(views.size());
-        framebufferInfo.pAttachments = views.data();
-        framebufferInfo.width = g_ctx.vk.swapChainImages[i]->extent.width;
-        framebufferInfo.height = g_ctx.vk.swapChainImages[i]->extent.height;
-        framebufferInfo.layers = 1;
+        framebufferInfo.pAttachments    = views.data();
+        framebufferInfo.width           = g_ctx.vk.swapChainImages[i]->extent.width;
+        framebufferInfo.height          = g_ctx.vk.swapChainImages[i]->extent.height;
+        framebufferInfo.layers          = 1;
 
         if (vkCreateFramebuffer(g_ctx.vk.device, &framebufferInfo, nullptr, &framebuffers[i]) != VK_SUCCESS) {
             throw std::runtime_error("failed to create framebuffer!");
@@ -91,12 +91,12 @@ void FireFieldNode::createRenderPass()
         { "color", VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE },
     };
     VkSubpassDependency dependency = {};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependency.srcSubpass          = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass          = 0;
+    dependency.srcStageMask        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstStageMask        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask       = 0;
+    dependency.dstAccessMask       = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
     render_pass = DefaultRenderPass(attachment_descriptions, helpers, dependency);
 }
@@ -111,15 +111,15 @@ void FireFieldNode::createPipeline(Configuration& cfg)
         };
         VkPushConstantRange pushConstantRange {};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-        pushConstantRange.offset = 0;
-        pushConstantRange.size = sizeof(float);
+        pushConstantRange.offset     = 0;
+        pushConstantRange.size       = sizeof(float);
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo {};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = descLayouts.size();
-        pipelineLayoutInfo.pSetLayouts = descLayouts.data();
+        pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutInfo.setLayoutCount         = descLayouts.size();
+        pipelineLayoutInfo.pSetLayouts            = descLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-        pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Optional
+        pipelineLayoutInfo.pPushConstantRanges    = &pushConstantRange; // Optional
         if (vkCreatePipelineLayout(g_ctx.vk.device, &pipelineLayoutInfo, nullptr, &pipeline.layout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create pipeline layout!");
         }
@@ -131,15 +131,15 @@ void FireFieldNode::createPipeline(Configuration& cfg)
         ViewportStateDefault();
         auto inputAssembly = Pipeline<Param>::inputAssemblyDefault();
         auto rasterization = Pipeline<Param>::rasterizationDefault();
-        auto multisample = Pipeline<Param>::multisampleDefault();
+        auto multisample   = Pipeline<Param>::multisampleDefault();
 
         JSON_GET(RenderGraphConfiguration, rg_cfg, cfg, "render_graph");
         auto vertShaderCode = readFile(rg_cfg.shader_directory + "/fire_field/node.vert.spv");
 
         auto frag_shader_path = std::filesystem::path(cfg.at("engine_directory")) / "function/render/render_graph/node/fire_field/node.frag";
-        auto filename = frag_shader_path.filename().string();
-        auto generated_path = rg_cfg.shader_directory + "/fire_field/generated/" + filename;
-        auto generated_spv = rg_cfg.shader_directory + "/fire_field/" + (filename + ".spv");
+        auto filename         = frag_shader_path.filename().string();
+        auto generated_path   = rg_cfg.shader_directory + "/fire_field/generated/" + filename;
+        auto generated_spv    = rg_cfg.shader_directory + "/fire_field/" + (filename + ".spv");
         if (!std::filesystem::exists(std::filesystem::path(generated_path).parent_path())) {
             std::filesystem::create_directories(std::filesystem::path(generated_path).parent_path());
         }
@@ -147,58 +147,58 @@ void FireFieldNode::createPipeline(Configuration& cfg)
         replaceDefine("FIELD_COUNT", (int)fields_cfg.arr.size(), frag_shader_path, generated_path);
         replaceDefine("MAX_FIELDS", (int)MAX_FIELDS, generated_path, generated_path);
         replaceDefine("FIRE_SELF_ILLUMINATION_BOOST",
-            (int)fields_cfg.fire_configuration.at("self_illumination_boost"), generated_path, generated_path);
+                      (int)fields_cfg.fire_configuration.at("self_illumination_boost"), generated_path, generated_path);
         replaceInclude("../../shader/common.glsl",
-            "../../common.glsl",
-            generated_path, generated_path);
+                       "../../common.glsl",
+                       generated_path, generated_path);
         glslc(generated_path, generated_spv);
         auto fragShaderCode = readFile(generated_spv);
 
-        auto vertShaderModule = createShaderModule(g_ctx.vk, vertShaderCode);
-        auto fragShaderModule = createShaderModule(g_ctx.vk, fragShaderCode);
+        auto vertShaderModule                                     = createShaderModule(g_ctx.vk, vertShaderCode);
+        auto fragShaderModule                                     = createShaderModule(g_ctx.vk, fragShaderCode);
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {
             Pipeline<Param>::shaderStageDefault(vertShaderModule, VK_SHADER_STAGE_VERTEX_BIT),
             Pipeline<Param>::shaderStageDefault(fragShaderModule, VK_SHADER_STAGE_FRAGMENT_BIT),
         };
         VkPipelineColorBlendAttachmentState colorBlendAttachment {};
-        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.blendEnable         = VK_TRUE;
         colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
         colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.colorBlendOp        = VK_BLEND_OP_ADD;
         colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.alphaBlendOp        = VK_BLEND_OP_ADD;
         VkPipelineColorBlendStateCreateInfo colorBlending {};
-        colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        colorBlending.logicOpEnable = VK_FALSE;
+        colorBlending.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+        colorBlending.logicOpEnable   = VK_FALSE;
         colorBlending.attachmentCount = 1;
-        colorBlending.pAttachments = &colorBlendAttachment;
+        colorBlending.pAttachments    = &colorBlendAttachment;
         VkPipelineDepthStencilStateCreateInfo depthStencil {};
-        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depthStencil.depthTestEnable = VK_FALSE;
-        depthStencil.depthWriteEnable = VK_FALSE;
-        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.depthTestEnable       = VK_FALSE;
+        depthStencil.depthWriteEnable      = VK_FALSE;
+        depthStencil.depthCompareOp        = VK_COMPARE_OP_LESS;
         depthStencil.depthBoundsTestEnable = VK_FALSE;
-        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable     = VK_FALSE;
 
         VkGraphicsPipelineCreateInfo pipelineInfo {};
-        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
-        pipelineInfo.pStages = shaderStages.data();
+        pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount          = static_cast<uint32_t>(shaderStages.size());
+        pipelineInfo.pStages             = shaderStages.data();
         pipelineInfo.pInputAssemblyState = &inputAssembly;
-        pipelineInfo.pVertexInputState = &vertexInput;
-        pipelineInfo.pViewportState = &viewportState;
+        pipelineInfo.pVertexInputState   = &vertexInput;
+        pipelineInfo.pViewportState      = &viewportState;
         pipelineInfo.pRasterizationState = &rasterization;
-        pipelineInfo.pDepthStencilState = &depthStencil;
-        pipelineInfo.pMultisampleState = &multisample;
-        pipelineInfo.pColorBlendState = &colorBlending;
-        pipelineInfo.pDynamicState = &dynamicState;
-        pipelineInfo.layout = pipeline.layout;
-        pipelineInfo.renderPass = render_pass;
-        pipelineInfo.subpass = 0;
-        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-        pipelineInfo.basePipelineIndex = -1; // Optional
+        pipelineInfo.pDepthStencilState  = &depthStencil;
+        pipelineInfo.pMultisampleState   = &multisample;
+        pipelineInfo.pColorBlendState    = &colorBlending;
+        pipelineInfo.pDynamicState       = &dynamicState;
+        pipelineInfo.layout              = pipeline.layout;
+        pipelineInfo.renderPass          = render_pass;
+        pipelineInfo.subpass             = 0;
+        pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE; // Optional
+        pipelineInfo.basePipelineIndex   = -1; // Optional
         if (vkCreateGraphicsPipelines(g_ctx.vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.pipeline) != VK_SUCCESS) {
             throw std::runtime_error("failed to create graphics pipeline!");
         }
@@ -207,8 +207,8 @@ void FireFieldNode::createPipeline(Configuration& cfg)
     }
 
     {
-        pipeline.param.camera = g_ctx.dm.getResourceHandle(g_ctx.rm->camera.buffer.id);
-        pipeline.param.lights = g_ctx.dm.getResourceHandle(g_ctx.rm->lights.buffer.id);
+        pipeline.param.camera                   = g_ctx.dm.getResourceHandle(g_ctx.rm->camera.buffer.id);
+        pipeline.param.lights                   = g_ctx.dm.getResourceHandle(g_ctx.rm->lights.buffer.id);
         pipeline.param.self_illumination_lights = g_ctx.dm.getResourceHandle(
             g_ctx.rm->fields.self_illumination_lights.buffer.id);
         pipeline.param.fire_color = g_ctx.dm.getResourceHandle(
@@ -233,23 +233,23 @@ void FireFieldNode::record(uint32_t swapchain_index)
     setDefaultViewportAndScissor();
 
     std::array<VkClearValue, 2> clearValues {};
-    clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } }; // dummy
+    clearValues[0].color        = { { 0.0f, 0.0f, 0.0f, 1.0f } }; // dummy
     clearValues[1].depthStencil = { 1.0f, 0 };
     VkRenderPassBeginInfo renderPassInfo {};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = render_pass;
-    renderPassInfo.framebuffer = framebuffers[swapchain_index];
+    renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass        = render_pass;
+    renderPassInfo.framebuffer       = framebuffers[swapchain_index];
     renderPassInfo.renderArea.offset = { 0, 0 };
     renderPassInfo.renderArea.extent = toVkExtent2D(g_ctx.vk.swapChainImages[swapchain_index]->extent);
-    renderPassInfo.clearValueCount = clearValues.size();
-    renderPassInfo.pClearValues = clearValues.data();
+    renderPassInfo.clearValueCount   = clearValues.size();
+    renderPassInfo.pClearValues      = clearValues.data();
     vkCmdBeginRenderPass(g_ctx.vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(g_ctx.vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
     bindDescriptorSet(0, pipeline.layout, g_ctx.dm.BINDLESS_SET());
     bindDescriptorSet(1, pipeline.layout, g_ctx.dm.getParameterSet(pipeline.param_buf.id));
     bindDescriptorSet(2, pipeline.layout,
-        g_ctx.dm.getParameterSet(g_ctx.rm->fields.paramBuffer.id));
+                      g_ctx.dm.getParameterSet(g_ctx.rm->fields.paramBuffer.id));
     vkCmdPushConstants(
         g_ctx.vk.commandBuffer,
         pipeline.layout,

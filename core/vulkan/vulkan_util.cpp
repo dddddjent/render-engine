@@ -41,9 +41,9 @@ uint32_t findMemoryType(const Context& ctx, uint32_t typeFilter, VkMemoryPropert
 void singleTimeCommands(const Context& ctx, const std::function<void(const VkCommandBuffer&)>& fn)
 {
     VkCommandBufferAllocateInfo allocInfo {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = ctx.commandPool;
+    allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool        = ctx.commandPool;
     allocInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
@@ -60,9 +60,9 @@ void singleTimeCommands(const Context& ctx, const std::function<void(const VkCom
     vkEndCommandBuffer(commandBuffer);
 
     VkSubmitInfo submitInfo {};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
+    submitInfo.pCommandBuffers    = &commandBuffer;
 
     vkQueueSubmit(ctx.queue, 1, &submitInfo, VK_NULL_HANDLE);
     vkQueueWaitIdle(ctx.queue);
@@ -84,7 +84,7 @@ VkDeviceSize createImage(
     const uint32_t mipLevels)
 {
     VkExternalMemoryImageCreateInfo externalImageInfo = {};
-    externalImageInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+    externalImageInfo.sType                           = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
 #ifdef _WIN64
     externalImageInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 #else
@@ -92,17 +92,17 @@ VkDeviceSize createImage(
 #endif
 
     VkImageCreateInfo imageInfo {};
-    imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    imageInfo.imageType = imageType;
-    imageInfo.extent = extent;
-    imageInfo.mipLevels = mipLevels;
-    imageInfo.arrayLayers = 1;
-    imageInfo.format = format;
-    imageInfo.tiling = tiling;
+    imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageInfo.imageType     = imageType;
+    imageInfo.extent        = extent;
+    imageInfo.mipLevels     = mipLevels;
+    imageInfo.arrayLayers   = 1;
+    imageInfo.format        = format;
+    imageInfo.tiling        = tiling;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.usage = usage;
-    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-    imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    imageInfo.usage         = usage;
+    imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
+    imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
     if (external)
         imageInfo.pNext = &externalImageInfo;
 
@@ -114,16 +114,16 @@ VkDeviceSize createImage(
     WindowsSecurityAttributes winSecurityAttributes;
 
     VkExportMemoryWin32HandleInfoKHR vulkanExportMemoryWin32HandleInfoKHR = {};
-    vulkanExportMemoryWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    vulkanExportMemoryWin32HandleInfoKHR.pNext = NULL;
-    vulkanExportMemoryWin32HandleInfoKHR.pAttributes = &winSecurityAttributes;
-    vulkanExportMemoryWin32HandleInfoKHR.dwAccess = DXGI_SHARED_RESOURCE_READ | DXGI_SHARED_RESOURCE_WRITE;
-    vulkanExportMemoryWin32HandleInfoKHR.name = (LPCWSTR)NULL;
+    vulkanExportMemoryWin32HandleInfoKHR.sType                            = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
+    vulkanExportMemoryWin32HandleInfoKHR.pNext                            = NULL;
+    vulkanExportMemoryWin32HandleInfoKHR.pAttributes                      = &winSecurityAttributes;
+    vulkanExportMemoryWin32HandleInfoKHR.dwAccess                         = DXGI_SHARED_RESOURCE_READ | DXGI_SHARED_RESOURCE_WRITE;
+    vulkanExportMemoryWin32HandleInfoKHR.name                             = (LPCWSTR)NULL;
 #endif
     VkExportMemoryAllocateInfo exportMemoryInfo = {};
-    exportMemoryInfo.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
+    exportMemoryInfo.sType                      = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
 #ifdef _WIN64
-    exportMemoryInfo.pNext = &vulkanExportMemoryWin32HandleInfoKHR;
+    exportMemoryInfo.pNext       = &vulkanExportMemoryWin32HandleInfoKHR;
     exportMemoryInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 #else
     exportMemoryInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
@@ -133,8 +133,8 @@ VkDeviceSize createImage(
     vkGetImageMemoryRequirements(ctx.device, image, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize  = memRequirements.size;
     allocInfo.memoryTypeIndex = findMemoryType(ctx, memRequirements.memoryTypeBits, properties);
     if (external)
         allocInfo.pNext = &exportMemoryInfo;
@@ -157,15 +157,15 @@ VkImageView createImageView(
     const uint32_t mipLevels)
 {
     VkImageViewCreateInfo viewInfo {};
-    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    viewInfo.image = image;
-    viewInfo.viewType = viewType;
-    viewInfo.format = format;
-    viewInfo.subresourceRange.aspectMask = aspectFlags;
-    viewInfo.subresourceRange.baseMipLevel = 0;
-    viewInfo.subresourceRange.levelCount = mipLevels;
+    viewInfo.sType                           = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image                           = image;
+    viewInfo.viewType                        = viewType;
+    viewInfo.format                          = format;
+    viewInfo.subresourceRange.aspectMask     = aspectFlags;
+    viewInfo.subresourceRange.baseMipLevel   = 0;
+    viewInfo.subresourceRange.levelCount     = mipLevels;
     viewInfo.subresourceRange.baseArrayLayer = 0;
-    viewInfo.subresourceRange.layerCount = 1;
+    viewInfo.subresourceRange.layerCount     = 1;
 
     VkImageView imageView;
     if (vkCreateImageView(ctx.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
@@ -185,7 +185,7 @@ void createBuffer(
     bool external)
 {
     VkExternalMemoryBufferCreateInfo externalBufferInfo = {};
-    externalBufferInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
+    externalBufferInfo.sType                            = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
 #ifdef _WIN64
     externalBufferInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 #else
@@ -196,16 +196,16 @@ void createBuffer(
     WindowsSecurityAttributes winSecurityAttributes;
 
     VkExportMemoryWin32HandleInfoKHR vulkanExportMemoryWin32HandleInfoKHR = {};
-    vulkanExportMemoryWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    vulkanExportMemoryWin32HandleInfoKHR.pNext = NULL;
-    vulkanExportMemoryWin32HandleInfoKHR.pAttributes = &winSecurityAttributes;
-    vulkanExportMemoryWin32HandleInfoKHR.dwAccess = DXGI_SHARED_RESOURCE_READ | DXGI_SHARED_RESOURCE_WRITE;
-    vulkanExportMemoryWin32HandleInfoKHR.name = (LPCWSTR)NULL;
+    vulkanExportMemoryWin32HandleInfoKHR.sType                            = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
+    vulkanExportMemoryWin32HandleInfoKHR.pNext                            = NULL;
+    vulkanExportMemoryWin32HandleInfoKHR.pAttributes                      = &winSecurityAttributes;
+    vulkanExportMemoryWin32HandleInfoKHR.dwAccess                         = DXGI_SHARED_RESOURCE_READ | DXGI_SHARED_RESOURCE_WRITE;
+    vulkanExportMemoryWin32HandleInfoKHR.name                             = (LPCWSTR)NULL;
 #endif
     VkExportMemoryAllocateInfo exportMemoryInfo = {};
-    exportMemoryInfo.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;
+    exportMemoryInfo.sType                      = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;
 #ifdef _WIN64
-    exportMemoryInfo.pNext = &vulkanExportMemoryWin32HandleInfoKHR;
+    exportMemoryInfo.pNext       = &vulkanExportMemoryWin32HandleInfoKHR;
     exportMemoryInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 #else
     exportMemoryInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
@@ -213,9 +213,9 @@ void createBuffer(
 
     // buffer
     VkBufferCreateInfo bufferInfo {};
-    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufferInfo.size = size;
-    bufferInfo.usage = usage;
+    bufferInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size        = size;
+    bufferInfo.usage       = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     if (external)
         bufferInfo.pNext = &externalBufferInfo;
@@ -228,8 +228,8 @@ void createBuffer(
     vkGetBufferMemoryRequirements(ctx.device, buffer, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize  = memRequirements.size;
     allocInfo.memoryTypeIndex = findMemoryType(ctx, memRequirements.memoryTypeBits, properties);
     if (external)
         allocInfo.pNext = &exportMemoryInfo;
@@ -263,7 +263,7 @@ void copyBuffer(
     VkBufferCopy copyRegion {};
     copyRegion.srcOffset = srcOffset;
     copyRegion.dstOffset = dstOffset;
-    copyRegion.size = size;
+    copyRegion.size      = size;
     vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 }
 
@@ -279,49 +279,49 @@ struct LayoutDependency {
 
 static std::unordered_map<VkImageLayout, LayoutDependency> layoutDependencies = {
     { VK_IMAGE_LAYOUT_UNDEFINED,
-        LayoutDependency {
-            0,
-            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT } },
+      LayoutDependency {
+          0,
+          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT } },
 
     { VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        LayoutDependency {
-            VK_ACCESS_TRANSFER_WRITE_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT } },
+      LayoutDependency {
+          VK_ACCESS_TRANSFER_WRITE_BIT,
+          VK_PIPELINE_STAGE_TRANSFER_BIT } },
 
     { VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        LayoutDependency {
-            VK_ACCESS_TRANSFER_READ_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT } },
+      LayoutDependency {
+          VK_ACCESS_TRANSFER_READ_BIT,
+          VK_PIPELINE_STAGE_TRANSFER_BIT } },
 
     { VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        LayoutDependency {
-            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT } },
+      LayoutDependency {
+          VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT } },
 
     { VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-        LayoutDependency {
-            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-            VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT } },
+      LayoutDependency {
+          VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
+          VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT } },
 
     { VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
-        LayoutDependency {
-            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_SHADER_READ_BIT,
-            VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT } },
+      LayoutDependency {
+          VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_SHADER_READ_BIT,
+          VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT } },
 
     { VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-        LayoutDependency {
-            VK_ACCESS_SHADER_READ_BIT,
-            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT } },
+      LayoutDependency {
+          VK_ACCESS_SHADER_READ_BIT,
+          VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT } },
 
     { VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-        LayoutDependency {
-            VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT } },
+      LayoutDependency {
+          VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT } },
 
     { VK_IMAGE_LAYOUT_GENERAL,
-        LayoutDependency {
-            VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
-            VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT } },
+      LayoutDependency {
+          VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+          VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT } },
 };
 
 void transitionImageLayout(
@@ -332,19 +332,19 @@ void transitionImageLayout(
     VkImageLayout newLayout)
 {
     VkImageMemoryBarrier barrier {};
-    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    barrier.oldLayout = oldLayout;
-    barrier.newLayout = newLayout;
-    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.image = image;
-    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
+    barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout                       = oldLayout;
+    barrier.newLayout                       = newLayout;
+    barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image                           = image;
+    barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel   = 0;
+    barrier.subresourceRange.levelCount     = 1;
     barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
-    barrier.srcAccessMask = 0; // TODO
-    barrier.dstAccessMask = 0; // TODO
+    barrier.subresourceRange.layerCount     = 1;
+    barrier.srcAccessMask                   = 0; // TODO
+    barrier.dstAccessMask                   = 0; // TODO
 
     assert(format != VK_FORMAT_D32_SFLOAT_S8_UINT && format != VK_FORMAT_D24_UNORM_S8_UINT);
 
@@ -359,7 +359,7 @@ void transitionImageLayout(
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
     }
 
-    const auto sourceDependency = layoutDependencies.find(oldLayout);
+    const auto sourceDependency      = layoutDependencies.find(oldLayout);
     const auto destinationDependency = layoutDependencies.find(newLayout);
     if (sourceDependency == layoutDependencies.end())
         throw std::runtime_error("Unsupported old layout");
@@ -407,14 +407,14 @@ void copyBufferToImage(
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     VkBufferImageCopy region {};
-    region.bufferOffset = bufferOffset; // Offset into the buffer (if needed)
-    region.bufferRowLength = 0; // Tightly packed
+    region.bufferOffset      = bufferOffset; // Offset into the buffer (if needed)
+    region.bufferRowLength   = 0; // Tightly packed
     region.bufferImageHeight = 0; // Tightly packed
 
-    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // If it's a color image
-    region.imageSubresource.mipLevel = mipLevel; // Mipmap level
+    region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT; // If it's a color image
+    region.imageSubresource.mipLevel       = mipLevel; // Mipmap level
     region.imageSubresource.baseArrayLayer = 0; // Starting layer (for 3D image, usually 0)
-    region.imageSubresource.layerCount = 1; // Only one "layer" for 3D images
+    region.imageSubresource.layerCount     = 1; // Only one "layer" for 3D images
 
     region.imageOffset = imageOffset;
     region.imageExtent = extent;
@@ -471,26 +471,26 @@ void copyImageToBuffer(
         imageLayout,
         VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 
-    VkBufferImageCopy region = {};
-    region.bufferOffset = bufferOffset;
-    region.bufferRowLength = 0; // Tightly packed
-    region.bufferImageHeight = 0; // Tightly packed
-    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    region.imageSubresource.mipLevel = mipLevel;
+    VkBufferImageCopy region               = {};
+    region.bufferOffset                    = bufferOffset;
+    region.bufferRowLength                 = 0; // Tightly packed
+    region.bufferImageHeight               = 0; // Tightly packed
+    region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel       = mipLevel;
     region.imageSubresource.baseArrayLayer = 0;
-    region.imageSubresource.layerCount = 1;
-    region.imageOffset = imageOffset;
-    region.imageExtent = extent;
+    region.imageSubresource.layerCount     = 1;
+    region.imageOffset                     = imageOffset;
+    region.imageExtent                     = extent;
     if (imageLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL || imageLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL)
         region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
     vkCmdCopyImageToBuffer(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);
 
     transitionImageLayout(commandBuffer,
-        image,
-        format,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        imageLayout);
+                          image,
+                          format,
+                          VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                          imageLayout);
 }
 
 void copyImageToBufferSingleTime(
@@ -536,18 +536,18 @@ void copyImageToImage(
         dstLayout,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-    VkImageCopy region = {};
-    region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    region.srcSubresource.mipLevel = srcMipLevel;
+    VkImageCopy region                   = {};
+    region.srcSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.srcSubresource.mipLevel       = srcMipLevel;
     region.srcSubresource.baseArrayLayer = 0;
-    region.srcSubresource.layerCount = 1;
-    region.srcOffset = srcOffset;
-    region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    region.dstSubresource.mipLevel = dstMipLevel;
+    region.srcSubresource.layerCount     = 1;
+    region.srcOffset                     = srcOffset;
+    region.dstSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.dstSubresource.mipLevel       = dstMipLevel;
     region.dstSubresource.baseArrayLayer = 0;
-    region.dstSubresource.layerCount = 1;
-    region.dstOffset = dstOffset;
-    region.extent = extent;
+    region.dstSubresource.layerCount     = 1;
+    region.dstOffset                     = dstOffset;
+    region.extent                        = extent;
     if (srcLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL || srcLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL)
         region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
     if (dstLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL || dstLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL)
@@ -591,9 +591,9 @@ void copyImageToImageSingleTime(
 VkShaderModule createShaderModule(const Context& ctx, const std::vector<char>& code)
 {
     VkShaderModuleCreateInfo createInfo {};
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+    createInfo.pCode    = reinterpret_cast<const uint32_t*>(code.data());
     VkShaderModule shaderModule;
     if (vkCreateShaderModule(ctx.device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
         throw std::runtime_error("failed to create shader module!");
@@ -618,9 +618,9 @@ HANDLE getVkSemaphoreHandle(const Context& ctx, VkSemaphore& semaphore)
     HANDLE handle;
 
     VkSemaphoreGetWin32HandleInfoKHR vulkanSemaphoreGetWin32HandleInfoKHR = {};
-    vulkanSemaphoreGetWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-    vulkanSemaphoreGetWin32HandleInfoKHR.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT;
-    vulkanSemaphoreGetWin32HandleInfoKHR.semaphore = semaphore;
+    vulkanSemaphoreGetWin32HandleInfoKHR.sType                            = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
+    vulkanSemaphoreGetWin32HandleInfoKHR.handleType                       = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT;
+    vulkanSemaphoreGetWin32HandleInfoKHR.semaphore                        = semaphore;
 
     fpGetSemaphoreWin32Handle(ctx.device, &vulkanSemaphoreGetWin32HandleInfoKHR, &handle);
 
@@ -632,9 +632,9 @@ int getVkSemaphoreHandle(const Context& ctx, VkSemaphore& semaphore)
     int fd;
 
     VkSemaphoreGetFdInfoKHR vulkanSemaphoreGetFdInfoKHR = {};
-    vulkanSemaphoreGetFdInfoKHR.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
-    vulkanSemaphoreGetFdInfoKHR.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR;
-    vulkanSemaphoreGetFdInfoKHR.semaphore = semaphore;
+    vulkanSemaphoreGetFdInfoKHR.sType                   = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
+    vulkanSemaphoreGetFdInfoKHR.handleType              = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR;
+    vulkanSemaphoreGetFdInfoKHR.semaphore               = semaphore;
 
     auto result = fpGetSemaphoreFdKHR(ctx.device, &vulkanSemaphoreGetFdInfoKHR, &fd);
 
@@ -652,28 +652,28 @@ WindowsSecurityAttributes::WindowsSecurityAttributes()
     PACL* ppACL = (PACL*)((PBYTE)ppSID + sizeof(PSID*));
 
     InitializeSecurityDescriptor(m_winPSecurityDescriptor,
-        SECURITY_DESCRIPTOR_REVISION);
+                                 SECURITY_DESCRIPTOR_REVISION);
 
     SID_IDENTIFIER_AUTHORITY sidIdentifierAuthority = SECURITY_WORLD_SID_AUTHORITY;
     AllocateAndInitializeSid(&sidIdentifierAuthority, 1, SECURITY_WORLD_RID, 0, 0,
-        0, 0, 0, 0, 0, ppSID);
+                             0, 0, 0, 0, 0, ppSID);
 
     EXPLICIT_ACCESS explicitAccess;
     ZeroMemory(&explicitAccess, sizeof(EXPLICIT_ACCESS));
     explicitAccess.grfAccessPermissions = STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL;
-    explicitAccess.grfAccessMode = SET_ACCESS;
-    explicitAccess.grfInheritance = INHERIT_ONLY;
-    explicitAccess.Trustee.TrusteeForm = TRUSTEE_IS_SID;
-    explicitAccess.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
-    explicitAccess.Trustee.ptstrName = (LPTSTR)*ppSID;
+    explicitAccess.grfAccessMode        = SET_ACCESS;
+    explicitAccess.grfInheritance       = INHERIT_ONLY;
+    explicitAccess.Trustee.TrusteeForm  = TRUSTEE_IS_SID;
+    explicitAccess.Trustee.TrusteeType  = TRUSTEE_IS_WELL_KNOWN_GROUP;
+    explicitAccess.Trustee.ptstrName    = (LPTSTR)*ppSID;
 
     SetEntriesInAcl(1, &explicitAccess, NULL, ppACL);
 
     SetSecurityDescriptorDacl(m_winPSecurityDescriptor, TRUE, *ppACL, FALSE);
 
-    m_winSecurityAttributes.nLength = sizeof(m_winSecurityAttributes);
+    m_winSecurityAttributes.nLength              = sizeof(m_winSecurityAttributes);
     m_winSecurityAttributes.lpSecurityDescriptor = m_winPSecurityDescriptor;
-    m_winSecurityAttributes.bInheritHandle = TRUE;
+    m_winSecurityAttributes.bInheritHandle       = TRUE;
 }
 
 SECURITY_ATTRIBUTES* WindowsSecurityAttributes::operator&()

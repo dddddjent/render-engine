@@ -17,30 +17,30 @@
 #include <dxgi1_2.h>
 #endif
 
-using cudaArray_t = unsigned long long*;
+using cudaArray_t         = unsigned long long*;
 using cudaTextureObject_t = unsigned long long*;
 using cudaSurfaceObject_t = unsigned long long*;
-using cudaStream_t = unsigned long long*;
+using cudaStream_t        = unsigned long long*;
 #include "function/tool/fire_light_updater.h"
 
 using namespace Vk;
 
-Fields::Fields() = default;
-Fields::~Fields() = default;
+Fields::Fields()                    = default;
+Fields::~Fields()                   = default;
 Fields::Fields(Fields&& f) noexcept = default;
 Fields& Fields::operator=(Fields&& f) noexcept
 {
     if (this != &f) {
-        this->fields = std::move(f.fields);
-        this->step = std::move(f.step);
+        this->fields      = std::move(f.fields);
+        this->step        = std::move(f.step);
         this->paramBuffer = std::move(f.paramBuffer);
 
-        this->has_temperature = std::move(f.has_temperature);
-        this->lights_dim = std::move(f.lights_dim);
-        this->lights = std::move(f.lights);
-        this->lights_updater = std::move(f.lights_updater);
+        this->has_temperature          = std::move(f.has_temperature);
+        this->lights_dim               = std::move(f.lights_dim);
+        this->lights                   = std::move(f.lights);
+        this->lights_updater           = std::move(f.lights_updater);
         this->self_illumination_lights = std::move(f.self_illumination_lights);
-        this->fire_color_img = std::move(f.fire_color_img);
+        this->fire_color_img           = std::move(f.fire_color_img);
     }
     return *this;
 };
@@ -74,8 +74,8 @@ std::vector<float> Field::loadFieldData(const FieldConfiguration& cfg)
 
     std::vector<float> data;
     if (extension_name == ".npy") {
-        npy::npy_data d = npy::read_npy<float>(cfg.path);
-        data = d.data;
+        npy::npy_data d         = npy::read_npy<float>(cfg.path);
+        data                    = d.data;
         const auto& image_shape = d.shape;
         assert(image_shape[0] == cfg.dimension[0]);
         assert(image_shape[1] == cfg.dimension[1]);
@@ -129,7 +129,7 @@ void SelfIlluminationLights::destroy()
 void SelfIlluminationLights::init(FieldsConfiguration& cfg)
 {
     VkDeviceSize bufferSize = sizeof(glm::vec4) * positions.size();
-    buffer = Buffer::New(
+    buffer                  = Buffer::New(
         g_ctx.vk,
         bufferSize,
         VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
@@ -159,10 +159,10 @@ void Fields::initFireLights(FieldsConfiguration& cfg)
     lights.name = "fire_lights";
 
     FireConfiguration fire_cfg = cfg.fire_configuration;
-    lights_dim.x = fire_cfg.light_sample_dim[0];
-    lights_dim.y = fire_cfg.light_sample_dim[1];
-    lights_dim.z = fire_cfg.light_sample_dim[2];
-    int total_num = lights_dim.x * lights_dim.y * lights_dim.z;
+    lights_dim.x               = fire_cfg.light_sample_dim[0];
+    lights_dim.y               = fire_cfg.light_sample_dim[1];
+    lights_dim.z               = fire_cfg.light_sample_dim[2];
+    int total_num              = lights_dim.x * lights_dim.y * lights_dim.z;
 
     int temperature_field_idx = -1;
     for (int i = 0; i < cfg.arr.size(); i++) {
@@ -174,9 +174,9 @@ void Fields::initFireLights(FieldsConfiguration& cfg)
     assert(temperature_field_idx != -1);
     const auto& temperature_field = cfg.arr[temperature_field_idx];
 
-    float step_x = temperature_field.size[0] / lights_dim.x;
-    float step_y = temperature_field.size[1] / lights_dim.y;
-    float step_z = temperature_field.size[2] / lights_dim.z;
+    float step_x        = temperature_field.size[0] / lights_dim.x;
+    float step_y        = temperature_field.size[1] / lights_dim.y;
+    float step_z        = temperature_field.size[2] / lights_dim.z;
     glm::vec3 start_pos = arrayToVec3(temperature_field.start_pos) + glm::vec3(step_x, step_y, step_z) / 2.0f;
     for (int z = 0; z < lights_dim.z; z++) {
         for (int y = 0; y < lights_dim.y; y++) {
@@ -203,10 +203,10 @@ void Fields::initFireLights(FieldsConfiguration& cfg)
 void Fields::initFireColorImage(FieldsConfiguration& cfg)
 {
     const std::string& fire_colors_path = cfg.fire_configuration.at("fire_colors_path");
-    npy::npy_data d = npy::read_npy<float>(fire_colors_path);
-    const auto& image_data = d.data;
-    const auto& image_shape = d.shape;
-    VkDeviceSize image_size = image_shape[0] * image_shape[1] * sizeof(float); // RGBA * sizeof(float)
+    npy::npy_data d                     = npy::read_npy<float>(fire_colors_path);
+    const auto& image_data              = d.data;
+    const auto& image_shape             = d.shape;
+    VkDeviceSize image_size             = image_shape[0] * image_shape[1] * sizeof(float); // RGBA * sizeof(float)
 
     const auto extent = VkExtent3D {
         static_cast<uint32_t>(image_shape[0]),
@@ -232,7 +232,7 @@ void Fields::initFireColorImage(FieldsConfiguration& cfg)
 Fields Fields::fromConfiguration(FieldsConfiguration& cfg)
 {
     Fields fields;
-    fields.step = cfg.step;
+    fields.step            = cfg.step;
     fields.has_temperature = false;
 
     assert(cfg.arr.size() <= MAX_FIELDS);
@@ -242,17 +242,17 @@ Fields Fields::fromConfiguration(FieldsConfiguration& cfg)
 
         field.name = field_config.name;
 
-        glm::vec3 start_pos = arrayToVec3(field_config.start_pos);
-        glm::vec3 size = arrayToVec3(field_config.size);
+        glm::vec3 start_pos     = arrayToVec3(field_config.start_pos);
+        glm::vec3 size          = arrayToVec3(field_config.size);
         field.data.to_local_uvw = Fields::toLocaluvw(g_ctx.rm->camera, start_pos, size);
-        field.data.scatter = arrayToVec3(field_config.scatter);
-        field.data.absorption = arrayToVec3(field_config.absorption);
-        field.data.aabb = AABB { .bmin = start_pos, .bmax = start_pos + size };
+        field.data.scatter      = arrayToVec3(field_config.scatter);
+        field.data.absorption   = arrayToVec3(field_config.absorption);
+        field.data.aabb         = AABB { .bmin = start_pos, .bmax = start_pos + size };
         if (field_config.data_type == "concentration") {
             field.data.type = FieldDataType::CONCENTRATION;
         } else if (field_config.data_type == "temperature") {
             assert(temp_field_cnt == 0 && "Only one temperature field is supported");
-            field.data.type = FieldDataType::TEMPERATURE;
+            field.data.type        = FieldDataType::TEMPERATURE;
             fields.has_temperature = true;
         }
 
@@ -305,9 +305,9 @@ HANDLE Fields::getVkFieldMemHandle(int index)
 {
     HANDLE handle;
     VkMemoryGetWin32HandleInfoKHR vkMemoryGetWin32HandleInfoKHR = {};
-    vkMemoryGetWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    vkMemoryGetWin32HandleInfoKHR.memory = fields[index].field_img.memory;
-    vkMemoryGetWin32HandleInfoKHR.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
+    vkMemoryGetWin32HandleInfoKHR.sType                         = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
+    vkMemoryGetWin32HandleInfoKHR.memory                        = fields[index].field_img.memory;
+    vkMemoryGetWin32HandleInfoKHR.handleType                    = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 
     fpGetMemoryWin32Handle(g_ctx.vk.device, &vkMemoryGetWin32HandleInfoKHR, &handle);
     return handle;
@@ -317,7 +317,7 @@ HANDLE Fields::getVkFieldMemHandle(const std::string& field_name)
 {
     HANDLE handle;
     VkMemoryGetWin32HandleInfoKHR vkMemoryGetWin32HandleInfoKHR = {};
-    vkMemoryGetWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
+    vkMemoryGetWin32HandleInfoKHR.sType                         = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
     for (const auto& field : fields) {
         if (field.name == field_name) {
             vkMemoryGetWin32HandleInfoKHR.memory = field.field_img.memory;
@@ -334,9 +334,9 @@ int Fields::getVkFieldMemHandle(int index)
 {
     int fd;
     VkMemoryGetFdInfoKHR vkMemoryGetFdInfoKHR = {};
-    vkMemoryGetFdInfoKHR.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
-    vkMemoryGetFdInfoKHR.memory = fields[index].field_img.memory;
-    vkMemoryGetFdInfoKHR.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
+    vkMemoryGetFdInfoKHR.sType                = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+    vkMemoryGetFdInfoKHR.memory               = fields[index].field_img.memory;
+    vkMemoryGetFdInfoKHR.handleType           = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
 
     fpGetMemoryFdKHR(g_ctx.vk.device, &vkMemoryGetFdInfoKHR, &fd);
     return fd;
@@ -346,7 +346,7 @@ int Fields::getVkFieldMemHandle(const std::string& field_name)
 {
     int fd;
     VkMemoryGetFdInfoKHR vkMemoryGetFdInfoKHR = {};
-    vkMemoryGetFdInfoKHR.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+    vkMemoryGetFdInfoKHR.sType                = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
     for (const auto& field : fields) {
         if (field.name == field_name) {
             vkMemoryGetFdInfoKHR.memory = field.field_img.memory;

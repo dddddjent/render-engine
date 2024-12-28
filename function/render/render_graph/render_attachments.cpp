@@ -27,8 +27,8 @@ void RenderAttachments::addAttachment(const std::string& name, RenderAttachmentT
 {
     assert(name != RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME());
     RenderAttachment attachment;
-    attachment.name = name;
-    attachment.type = type;
+    attachment.name  = name;
+    attachment.type  = type;
     attachment.usage = usage;
     attachment.image = Image::New(
         g_ctx.vk,

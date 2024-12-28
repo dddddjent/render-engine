@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vulkan/vulkan_core.h>
 #include <functional>
+#include <vulkan/vulkan_core.h>
 #ifdef _WIN64
 struct GLFWwindow;
 #else

@@ -17,8 +17,8 @@ enum class DescriptorHandle : uint32_t {
 };
 
 enum class DescriptorType : uint8_t {
-    Uniform = 0,
-    Storage = 1,
+    Uniform              = 0,
+    Storage              = 1,
     CombinedImageSampler = 2,
 
     Count = 3,
@@ -66,11 +66,11 @@ public:
 
     void cleanup();
 
-    static constexpr size_t MAX_UNIFORM_DESCRIPTORS = 1024;
-    static constexpr size_t MAX_STORAGE_DESCRIPTORS = 1024;
+    static constexpr size_t MAX_UNIFORM_DESCRIPTORS                = 1024;
+    static constexpr size_t MAX_STORAGE_DESCRIPTORS                = 1024;
     static constexpr size_t MAX_COMBINED_IMAGE_SAMPLER_DESCRIPTORS = 1024;
-    static constexpr size_t TYPE_COUNT = static_cast<size_t>(DescriptorType::Count);
-    static constexpr size_t MAX_TYPE_DESCRIPTORS[TYPE_COUNT] = {
+    static constexpr size_t TYPE_COUNT                             = static_cast<size_t>(DescriptorType::Count);
+    static constexpr size_t MAX_TYPE_DESCRIPTORS[TYPE_COUNT]       = {
         MAX_UNIFORM_DESCRIPTORS,
         MAX_STORAGE_DESCRIPTORS,
         MAX_COMBINED_IMAGE_SAMPLER_DESCRIPTORS,

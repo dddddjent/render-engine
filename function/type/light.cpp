@@ -1,6 +1,6 @@
 #include "light.h"
-#include "core/tool/logger.h"
 #include "core/math/math.h"
+#include "core/tool/logger.h"
 #include "function/global_context.h"
 
 using namespace Vk;
@@ -12,7 +12,7 @@ Lights Lights::fromConfiguration(const std::vector<LightConfiguration>& config)
 
     for (int i = 0; i < config.size(); i++) {
         LightData light;
-        light.posOrDir = arrayToVec3(config[i].posOrDir);
+        light.posOrDir  = arrayToVec3(config[i].posOrDir);
         light.intensity = arrayToVec3(config[i].intensity);
         lights.data.emplace_back(light);
     }

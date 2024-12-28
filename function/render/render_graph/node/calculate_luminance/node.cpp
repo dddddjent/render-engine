@@ -57,13 +57,13 @@ void CalculateLuminance::createFramebuffer()
         };
 
         VkFramebufferCreateInfo framebufferInfo {};
-        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = render_pass;
+        framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass      = render_pass;
         framebufferInfo.attachmentCount = static_cast<uint32_t>(views.size());
-        framebufferInfo.pAttachments = views.data();
-        framebufferInfo.width = g_ctx.vk.swapChainImages[i]->extent.width;
-        framebufferInfo.height = g_ctx.vk.swapChainImages[i]->extent.height;
-        framebufferInfo.layers = 1;
+        framebufferInfo.pAttachments    = views.data();
+        framebufferInfo.width           = g_ctx.vk.swapChainImages[i]->extent.width;
+        framebufferInfo.height          = g_ctx.vk.swapChainImages[i]->extent.height;
+        framebufferInfo.layers          = 1;
 
         if (vkCreateFramebuffer(g_ctx.vk.device, &framebufferInfo, nullptr, &framebuffers[i]) != VK_SUCCESS) {
             throw std::runtime_error("failed to create framebuffer!");
@@ -78,12 +78,12 @@ void CalculateLuminance::createRenderPass()
     };
 
     VkSubpassDependency dependency = {};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependency.srcSubpass          = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass          = 0;
+    dependency.srcStageMask        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstStageMask        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask       = 0;
+    dependency.dstAccessMask       = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
     render_pass = DefaultRenderPass(attachment_descriptions, helpers, dependency);
 }
@@ -104,50 +104,50 @@ void CalculateLuminance::createPipeline(Configuration& cfg)
         ViewportStateDefault();
         auto inputAssembly = Pipeline<Param>::inputAssemblyDefault();
         auto rasterization = Pipeline<Param>::rasterizationDefault();
-        auto multisample = Pipeline<Param>::multisampleDefault();
+        auto multisample   = Pipeline<Param>::multisampleDefault();
 
         JSON_GET(RenderGraphConfiguration, rg_cfg, cfg, "render_graph");
-        auto vertShaderCode = readFile(rg_cfg.shader_directory + "/calculate_luminance/node.vert.spv");
-        auto fragShaderCode = readFile(rg_cfg.shader_directory + "/calculate_luminance/node.frag.spv");
-        auto vertShaderModule = createShaderModule(g_ctx.vk, vertShaderCode);
-        auto fragShaderModule = createShaderModule(g_ctx.vk, fragShaderCode);
+        auto vertShaderCode                                       = readFile(rg_cfg.shader_directory + "/calculate_luminance/node.vert.spv");
+        auto fragShaderCode                                       = readFile(rg_cfg.shader_directory + "/calculate_luminance/node.frag.spv");
+        auto vertShaderModule                                     = createShaderModule(g_ctx.vk, vertShaderCode);
+        auto fragShaderModule                                     = createShaderModule(g_ctx.vk, fragShaderCode);
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {
             Pipeline<Param>::shaderStageDefault(vertShaderModule, VK_SHADER_STAGE_VERTEX_BIT),
             Pipeline<Param>::shaderStageDefault(fragShaderModule, VK_SHADER_STAGE_FRAGMENT_BIT),
         };
         VkPipelineColorBlendAttachmentState colorBlendAttachment {};
         colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        colorBlendAttachment.blendEnable = VK_FALSE;
+        colorBlendAttachment.blendEnable    = VK_FALSE;
         VkPipelineColorBlendStateCreateInfo colorBlending {};
-        colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        colorBlending.logicOpEnable = VK_FALSE;
+        colorBlending.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+        colorBlending.logicOpEnable   = VK_FALSE;
         colorBlending.attachmentCount = 1;
-        colorBlending.pAttachments = &colorBlendAttachment;
+        colorBlending.pAttachments    = &colorBlendAttachment;
         VkPipelineDepthStencilStateCreateInfo depthStencil {};
-        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depthStencil.depthTestEnable = VK_FALSE;
-        depthStencil.depthWriteEnable = VK_FALSE;
-        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.depthTestEnable       = VK_FALSE;
+        depthStencil.depthWriteEnable      = VK_FALSE;
+        depthStencil.depthCompareOp        = VK_COMPARE_OP_LESS;
         depthStencil.depthBoundsTestEnable = VK_FALSE;
-        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable     = VK_FALSE;
 
         VkGraphicsPipelineCreateInfo pipelineInfo {};
-        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
-        pipelineInfo.pStages = shaderStages.data();
+        pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount          = static_cast<uint32_t>(shaderStages.size());
+        pipelineInfo.pStages             = shaderStages.data();
         pipelineInfo.pInputAssemblyState = &inputAssembly;
-        pipelineInfo.pVertexInputState = &vertexInput;
-        pipelineInfo.pViewportState = &viewportState;
+        pipelineInfo.pVertexInputState   = &vertexInput;
+        pipelineInfo.pViewportState      = &viewportState;
         pipelineInfo.pRasterizationState = &rasterization;
-        pipelineInfo.pDepthStencilState = &depthStencil;
-        pipelineInfo.pMultisampleState = &multisample;
-        pipelineInfo.pColorBlendState = &colorBlending;
-        pipelineInfo.pDynamicState = &dynamicState;
-        pipelineInfo.layout = pipeline.layout;
-        pipelineInfo.renderPass = render_pass;
-        pipelineInfo.subpass = 0;
-        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-        pipelineInfo.basePipelineIndex = -1; // Optional
+        pipelineInfo.pDepthStencilState  = &depthStencil;
+        pipelineInfo.pMultisampleState   = &multisample;
+        pipelineInfo.pColorBlendState    = &colorBlending;
+        pipelineInfo.pDynamicState       = &dynamicState;
+        pipelineInfo.layout              = pipeline.layout;
+        pipelineInfo.renderPass          = render_pass;
+        pipelineInfo.subpass             = 0;
+        pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE; // Optional
+        pipelineInfo.basePipelineIndex   = -1; // Optional
         if (vkCreateGraphicsPipelines(g_ctx.vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.pipeline) != VK_SUCCESS) {
             throw std::runtime_error("failed to create graphics pipeline!");
         }
@@ -174,13 +174,13 @@ void CalculateLuminance::record(uint32_t swapchain_index)
     setDefaultViewportAndScissor();
 
     VkRenderPassBeginInfo renderPassInfo {};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = render_pass;
-    renderPassInfo.framebuffer = framebuffers[swapchain_index];
+    renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass        = render_pass;
+    renderPassInfo.framebuffer       = framebuffers[swapchain_index];
     renderPassInfo.renderArea.offset = { 0, 0 };
     renderPassInfo.renderArea.extent = toVkExtent2D(g_ctx.vk.swapChainImages[swapchain_index]->extent);
-    renderPassInfo.clearValueCount = 0;
-    renderPassInfo.pClearValues = nullptr;
+    renderPassInfo.clearValueCount   = 0;
+    renderPassInfo.pClearValues      = nullptr;
     vkCmdBeginRenderPass(g_ctx.vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(g_ctx.vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);

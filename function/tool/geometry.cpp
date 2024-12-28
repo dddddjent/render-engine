@@ -16,11 +16,11 @@ GeometryGenerator::sphere(glm::vec3 pos, float radius, int tessellation)
             float y = radius * cos(theta);
             float z = radius * sin(theta) * sin(phi);
             vertices.emplace_back();
-            vertices.back().pos = glm::vec3 { x, y, z } + pos;
+            vertices.back().pos    = glm::vec3 { x, y, z } + pos;
             vertices.back().normal = glm::normalize(glm::vec3 { x, y, z });
 
-            float u = (float)lon / tessellation;
-            float v = (float)lat / tessellation;
+            float u            = (float)lon / tessellation;
+            float v            = (float)lat / tessellation;
             vertices.back().uv = glm::vec2(u, v);
 
             vertices.back().tangent = -glm::cross(vertices.back().normal, glm::normalize(glm::vec3 { cos(theta) * cos(phi), -sin(theta), cos(theta) * sin(phi) }));
@@ -29,36 +29,36 @@ GeometryGenerator::sphere(glm::vec3 pos, float radius, int tessellation)
     int top = vertices.size();
     for (int lon = 0; lon <= tessellation; ++lon) {
         vertices.emplace_back();
-        vertices.back().pos = pos + glm::vec3 { 0, radius, 0 };
+        vertices.back().pos    = pos + glm::vec3 { 0, radius, 0 };
         vertices.back().normal = { 0, 1, 0 };
 
-        float u = (float)(lon + 0.5f) / tessellation;
+        float u            = (float)(lon + 0.5f) / tessellation;
         vertices.back().uv = glm::vec2(u, 0.0f);
 
-        float phi = (lon + 0.5f) * 2 * M_PI / tessellation;
-        float x = cos(phi);
-        float z = sin(phi);
+        float phi               = (lon + 0.5f) * 2 * M_PI / tessellation;
+        float x                 = cos(phi);
+        float z                 = sin(phi);
         vertices.back().tangent = -glm::cross(vertices.back().normal, glm::normalize(glm::vec3 { x, 0, z }));
     }
     for (int lon = 0; lon <= tessellation; ++lon) {
         vertices.emplace_back();
-        vertices.back().pos = pos - glm::vec3 { 0, radius, 0 };
+        vertices.back().pos    = pos - glm::vec3 { 0, radius, 0 };
         vertices.back().normal = { 0, -1, 0 };
 
-        float u = (float)(lon + 0.5f) / tessellation;
+        float u            = (float)(lon + 0.5f) / tessellation;
         vertices.back().uv = glm::vec2(u, 1.0f);
 
-        float phi = (lon + 0.5f) * 2 * M_PI / tessellation;
-        float x = cos(phi);
-        float z = sin(phi);
+        float phi               = (lon + 0.5f) * 2 * M_PI / tessellation;
+        float x                 = cos(phi);
+        float z                 = sin(phi);
         vertices.back().tangent = -glm::cross(vertices.back().normal, glm::normalize(glm::vec3 { x, 0, z }));
     }
 
     for (unsigned int lat = 0; lat < tessellation - 2; ++lat) {
         for (unsigned int lon = 0; lon < tessellation; ++lon) {
-            unsigned int first = lat * (tessellation + 1) + lon;
+            unsigned int first  = lat * (tessellation + 1) + lon;
             unsigned int second = lat * (tessellation + 1) + (lon + 1) % (tessellation + 1);
-            unsigned int third = first + (tessellation + 1);
+            unsigned int third  = first + (tessellation + 1);
             unsigned int fourth = second + (tessellation + 1);
 
             indices.push_back(first);
@@ -71,17 +71,17 @@ GeometryGenerator::sphere(glm::vec3 pos, float radius, int tessellation)
         }
     }
     for (int i = 0; i < tessellation; ++i) {
-        unsigned int first = top + i;
+        unsigned int first  = top + i;
         unsigned int second = i;
-        unsigned int third = (i + 1) % (tessellation + 1);
+        unsigned int third  = (i + 1) % (tessellation + 1);
         indices.push_back(first);
         indices.push_back(third);
         indices.push_back(second);
     }
     for (int i = 0; i < tessellation; ++i) {
-        unsigned int first = top + (tessellation + 1) + i;
+        unsigned int first  = top + (tessellation + 1) + i;
         unsigned int second = top - (tessellation + 1) + i;
-        unsigned int third = top - (tessellation + 1) + (i + 1) % (tessellation + 1);
+        unsigned int third  = top - (tessellation + 1) + (i + 1) % (tessellation + 1);
         indices.push_back(first);
         indices.push_back(second);
         indices.push_back(third);
@@ -105,7 +105,7 @@ GeometryGenerator::cube(glm::vec3 pos, glm::vec3 scale)
         { 0.5f, 0.5f, -0.5f },
         { -0.5f, 0.5f, -0.5f },
     } };
-    std::array<glm::vec3, 6> normals = { {
+    std::array<glm::vec3, 6> normals   = { {
         { 0.0f, 0.0f, 1.0f },
         { 0.0f, 0.0f, -1.0f },
         { 0.0f, -1.0f, 0.0f },
@@ -113,13 +113,13 @@ GeometryGenerator::cube(glm::vec3 pos, glm::vec3 scale)
         { 0.0f, 1.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f },
     } };
-    std::array<glm::vec2, 8> uvs = { {
+    std::array<glm::vec2, 8> uvs       = { {
         { 0.0f, 0.0f },
         { 1.0f, 0.0f },
         { 1.0f, 1.0f },
         { 0.0f, 1.0f },
     } };
-    vertices = {
+    vertices                           = {
         { positions[0], normals[0], uvs[0] },
         { positions[1], normals[0], uvs[1] },
         { positions[2], normals[0], uvs[2] },
@@ -195,14 +195,14 @@ GeometryGenerator::cube(glm::vec3 pos, glm::vec3 scale)
     };
 
     glm::mat4x4 transform = glm::identity<glm::mat4x4>();
-    transform = glm::translate(transform, pos);
-    transform = glm::scale(transform, scale);
-    auto transform_n = glm::transpose(glm::inverse(transform));
+    transform             = glm::translate(transform, pos);
+    transform             = glm::scale(transform, scale);
+    auto transform_n      = glm::transpose(glm::inverse(transform));
     for (auto& vertex : vertices) {
-        auto pos = transform * glm::vec4(vertex.pos, 1.0f);
+        auto pos   = transform * glm::vec4(vertex.pos, 1.0f);
         vertex.pos = glm::vec3(pos.x, pos.y, pos.z);
 
-        auto normal = transform_n * glm::vec4(vertex.normal, 1.0f);
+        auto normal   = transform_n * glm::vec4(vertex.normal, 1.0f);
         vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
         vertex.normal = glm::normalize(vertex.normal);
     }
@@ -224,9 +224,9 @@ GeometryGenerator::plane(glm::vec3 pos, glm::vec3 normal, std::vector<float> siz
         up = glm::vec3(0, 1, 0);
     }
 
-    glm::vec3 tangent = glm::normalize(glm::cross(normal, up));
+    glm::vec3 tangent   = glm::normalize(glm::cross(normal, up));
     glm::vec3 bitangent = glm::normalize(glm::cross(normal, tangent));
-    vertices = {
+    vertices            = {
         { pos + -0.5f * size[0] * tangent + -0.5f * size[1] * bitangent, normal, { 0.0f, 0.0f } },
         { pos + 0.5f * size[0] * tangent + -0.5f * size[1] * bitangent, normal, { 1.0f, 0.0f } },
         { pos + 0.5f * size[0] * tangent + 0.5f * size[1] * bitangent, normal, { 1.0f, 1.0f } },

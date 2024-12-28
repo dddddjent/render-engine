@@ -14,27 +14,27 @@ void ResourceManager::load(Configuration& config)
 
     JSON_GET(std::vector<MeshConfiguration>, mesh_cfg, config, "meshes");
     for (auto& cfg : mesh_cfg) {
-        auto mesh = Mesh::fromConfiguration(cfg);
+        auto mesh         = Mesh::fromConfiguration(cfg);
         meshes[mesh.name] = mesh;
     }
 
     loadDefaultTextures();
     JSON_GET(std::vector<TextureConfiguration>, texture_cfg, config, "textures");
     for (auto& cfg : texture_cfg) {
-        auto texture = Texture::fromConfiguration(cfg);
+        auto texture           = Texture::fromConfiguration(cfg);
         textures[texture.name] = texture;
     }
 
     JSON_GET(std::vector<MaterialConfiguration>, material_cfg, config, "materials");
     for (auto& cfg : material_cfg) {
-        auto material = Material::fromConfiguration(cfg);
+        auto material            = Material::fromConfiguration(cfg);
         materials[material.name] = material;
     }
 
     json fields_json = config["fields"];
     if (!fields_json.is_null()) {
         FieldsConfiguration fields_cfg = std::move(fields_json.get<FieldsConfiguration>());
-        fields = Fields::fromConfiguration(fields_cfg);
+        fields                         = Fields::fromConfiguration(fields_cfg);
     }
 
     JSON_GET(std::vector<ObjectConfiguration>, objects_cfg, config, "objects");
@@ -72,9 +72,9 @@ void ResourceManager::cleanup()
 
 void ResourceManager::loadDefaultTextures()
 {
-    textures["default_color"] = Texture::loadDefaultColorTexture();
-    textures["default_metallic"] = Texture::loadDefaultMetallicTexture();
+    textures["default_color"]     = Texture::loadDefaultColorTexture();
+    textures["default_metallic"]  = Texture::loadDefaultMetallicTexture();
     textures["default_roughness"] = Texture::loadDefaultRoughnessTexture();
-    textures["default_normal"] = Texture::loadDefaultNormalTexture();
-    textures["default_ao"] = Texture::loadDefaultAoTexture();
+    textures["default_normal"]    = Texture::loadDefaultNormalTexture();
+    textures["default_ao"]        = Texture::loadDefaultAoTexture();
 }

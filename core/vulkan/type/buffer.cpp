@@ -5,15 +5,15 @@
 
 using namespace Vk;
 
-Buffer::Buffer() = default;
+Buffer::Buffer()  = default;
 Buffer::~Buffer() = default;
 
 Buffer Buffer::New(const Vk::Context& ctx,
-    VkDeviceSize size,
-    VkBufferUsageFlags usage,
-    VkMemoryPropertyFlags properties,
-    bool cpu_mapped,
-    bool external)
+                   VkDeviceSize size,
+                   VkBufferUsageFlags usage,
+                   VkMemoryPropertyFlags properties,
+                   bool cpu_mapped,
+                   bool external)
 {
     Buffer b;
     b.CreateUUID();

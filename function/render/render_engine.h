@@ -38,7 +38,7 @@ private:
     GlobalContext* g_ctx;
     std::unique_ptr<RenderGraph> render_graph;
 
-    uint32_t WIDTH = 800;
+    uint32_t WIDTH  = 800;
     uint32_t HEIGHT = 600;
 
     GLFWwindow* window;

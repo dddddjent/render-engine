@@ -19,7 +19,7 @@ Object Object::fromConfiguration(ObjectConfiguration& config)
     obj.mesh = config.mesh;
 
     obj.param.material = g_ctx.dm.getResourceHandle(g_ctx.rm->materials[config.material].buffer.id);
-    obj.paramBuffer = Buffer::New(
+    obj.paramBuffer    = Buffer::New(
         g_ctx.vk,
         sizeof(Param),
         VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -36,9 +36,9 @@ HANDLE Object::getVkVertexMemHandle()
 {
     HANDLE handle;
     VkMemoryGetWin32HandleInfoKHR vkMemoryGetWin32HandleInfoKHR = {};
-    vkMemoryGetWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    vkMemoryGetWin32HandleInfoKHR.memory = g_ctx.rm->meshes[mesh].vertexBuffer.memory;
-    vkMemoryGetWin32HandleInfoKHR.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
+    vkMemoryGetWin32HandleInfoKHR.sType                         = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
+    vkMemoryGetWin32HandleInfoKHR.memory                        = g_ctx.rm->meshes[mesh].vertexBuffer.memory;
+    vkMemoryGetWin32HandleInfoKHR.handleType                    = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 
     fpGetMemoryWin32Handle(g_ctx.vk.device, &vkMemoryGetWin32HandleInfoKHR, &handle);
     return handle;
@@ -48,9 +48,9 @@ int Object::getVkVertexMemHandle()
 {
     int fd;
     VkMemoryGetFdInfoKHR vkMemoryGetFdInfoKHR = {};
-    vkMemoryGetFdInfoKHR.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
-    vkMemoryGetFdInfoKHR.memory = g_ctx.rm->meshes[mesh].vertexBuffer.memory;
-    vkMemoryGetFdInfoKHR.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
+    vkMemoryGetFdInfoKHR.sType                = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+    vkMemoryGetFdInfoKHR.memory               = g_ctx.rm->meshes[mesh].vertexBuffer.memory;
+    vkMemoryGetFdInfoKHR.handleType           = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
 
     fpGetMemoryFdKHR(g_ctx.vk.device, &vkMemoryGetFdInfoKHR, &fd);
     return fd;

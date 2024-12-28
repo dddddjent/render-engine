@@ -82,10 +82,10 @@ private:
     void createSyncObjects();
     void createSyncObjectsExt();
 
-    uint32_t WIDTH = 800;
-    uint32_t HEIGHT = 600;
+    uint32_t WIDTH                 = 800;
+    uint32_t HEIGHT                = 600;
     const int MAX_FRAMES_IN_FLIGHT = 1;
-    uint32_t currentFrame = 0;
+    uint32_t currentFrame          = 0;
 
     const std::vector<const char*> instanceExtensions = {
 #ifdef DEBUG

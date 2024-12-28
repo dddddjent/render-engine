@@ -25,7 +25,7 @@ protected:
     void initAttachments();
 
 public:
-    virtual ~RenderGraph() = default;
+    virtual ~RenderGraph()                = default;
     virtual void init(Configuration& cfg) = 0;
     // record all the render commands
     virtual void record(uint32_t swapchain_index);

@@ -64,10 +64,10 @@ VkDeviceSize createImage(
     VkMemoryPropertyFlags properties,
     VkImage& image,
     VkDeviceMemory& imageMemory,
-    bool external = false,
-    const VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL,
+    bool external               = false,
+    const VkImageTiling tiling  = VK_IMAGE_TILING_OPTIMAL,
     const VkImageType imageType = VK_IMAGE_TYPE_2D,
-    const uint32_t mipLevels = 1);
+    const uint32_t mipLevels    = 1);
 VkImageView createImageView(
     const Vk::Context& ctx,
     VkImage image,
@@ -96,8 +96,8 @@ void copyBufferToImage(
     VkImageLayout imageLayout,
     VkFormat format,
     const VkExtent3D& extent,
-    const uint32_t mipLevel = 0,
-    const VkOffset3D& imageOffset = { 0, 0, 0 },
+    const uint32_t mipLevel          = 0,
+    const VkOffset3D& imageOffset    = { 0, 0, 0 },
     const VkDeviceSize& bufferOffset = 0);
 void copyBufferToImageSingleTime(
     const Context& ctx,
@@ -106,8 +106,8 @@ void copyBufferToImageSingleTime(
     VkImageLayout imageLayout,
     VkFormat format,
     const VkExtent3D& extent,
-    const uint32_t mipLevel = 0,
-    const VkOffset3D& imageOffset = { 0, 0, 0 },
+    const uint32_t mipLevel          = 0,
+    const VkOffset3D& imageOffset    = { 0, 0, 0 },
     const VkDeviceSize& bufferOffset = 0);
 void copyImageToBuffer(
     VkCommandBuffer commandBuffer,
@@ -116,8 +116,8 @@ void copyImageToBuffer(
     VkImageLayout imageLayout,
     VkFormat format,
     const VkExtent3D& extent,
-    const uint32_t mipLevel = 0,
-    const VkOffset3D& imageOffset = { 0, 0, 0 },
+    const uint32_t mipLevel          = 0,
+    const VkOffset3D& imageOffset    = { 0, 0, 0 },
     const VkDeviceSize& bufferOffset = 0);
 void copyImageToBufferSingleTime(
     const Context& ctx,
@@ -126,8 +126,8 @@ void copyImageToBufferSingleTime(
     VkImageLayout imageLayout,
     VkFormat format,
     const VkExtent3D& extent,
-    const uint32_t mipLevel = 0,
-    const VkOffset3D& imageOffset = { 0, 0, 0 },
+    const uint32_t mipLevel          = 0,
+    const VkOffset3D& imageOffset    = { 0, 0, 0 },
     const VkDeviceSize& bufferOffset = 0);
 void copyImageToImage(
     VkCommandBuffer commandBuffer,
@@ -138,8 +138,8 @@ void copyImageToImage(
     VkFormat srcFormat,
     VkFormat dstFormat,
     const VkExtent3D& extent,
-    const uint32_t srcMipLevel = 0,
-    const uint32_t dstMipLevel = 0,
+    const uint32_t srcMipLevel  = 0,
+    const uint32_t dstMipLevel  = 0,
     const VkOffset3D& srcOffset = { 0, 0, 0 },
     const VkOffset3D& dstOffset = { 0, 0, 0 });
 void copyImageToImageSingleTime(
@@ -151,8 +151,8 @@ void copyImageToImageSingleTime(
     VkFormat srcFormat,
     VkFormat dstFormat,
     const VkExtent3D& extent,
-    const uint32_t srcMipLevel = 0,
-    const uint32_t dstMipLevel = 0,
+    const uint32_t srcMipLevel  = 0,
+    const uint32_t dstMipLevel  = 0,
     const VkOffset3D& srcOffset = { 0, 0, 0 },
     const VkOffset3D& dstOffset = { 0, 0, 0 });
 

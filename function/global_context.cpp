@@ -3,7 +3,7 @@
 
 GlobalContext g_ctx;
 
-GlobalContext::GlobalContext() = default;
+GlobalContext::GlobalContext()  = default;
 GlobalContext::~GlobalContext() = default;
 
 void GlobalContext::init(Configuration& config, GLFWwindow* window)

@@ -30,21 +30,21 @@ void ImGuiEngine::init(const Configuration& config, void* render_to_ui)
     ImGui_ImplGlfw_InitForVulkan(vk2im->window, true);
 
     ImGui_ImplVulkan_InitInfo info;
-    info.Instance = vk2im->instance;
-    info.PhysicalDevice = vk2im->physicalDevice;
-    info.Device = vk2im->device;
-    info.Queue = vk2im->queue;
-    info.QueueFamily = vk2im->queueFamily;
-    info.DescriptorPool = vk2im->descriptorPool;
-    info.RenderPass = vk2im->renderPass;
-    info.Subpass = vk2im->subpass;
-    info.MinImageCount = vk2im->image_count;
-    info.ImageCount = vk2im->image_count;
-    info.MinAllocationSize = 1024 * 1024;
-    info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-    info.PipelineCache = nullptr;
-    info.Allocator = nullptr;
-    info.CheckVkResultFn = check_vk_result;
+    info.Instance            = vk2im->instance;
+    info.PhysicalDevice      = vk2im->physicalDevice;
+    info.Device              = vk2im->device;
+    info.Queue               = vk2im->queue;
+    info.QueueFamily         = vk2im->queueFamily;
+    info.DescriptorPool      = vk2im->descriptorPool;
+    info.RenderPass          = vk2im->renderPass;
+    info.Subpass             = vk2im->subpass;
+    info.MinImageCount       = vk2im->image_count;
+    info.ImageCount          = vk2im->image_count;
+    info.MinAllocationSize   = 1024 * 1024;
+    info.MSAASamples         = VK_SAMPLE_COUNT_1_BIT;
+    info.PipelineCache       = nullptr;
+    info.Allocator           = nullptr;
+    info.CheckVkResultFn     = check_vk_result;
     info.UseDynamicRendering = false;
     ImGui_ImplVulkan_Init(&info);
 }
@@ -84,11 +84,11 @@ void ImGuiEngine::drawAxis()
         IM_COL32(0, 255, 0, 255),
         IM_COL32(0, 0, 255, 255),
     };
-    constexpr float scale = 50.0f;
+    constexpr float scale  = 50.0f;
     constexpr float offset = 100.0f;
 
     ImDrawList* draw_list = ImGui::GetBackgroundDrawList();
-    ImVec2 screen_size = ImGui::GetIO().DisplaySize;
+    ImVec2 screen_size    = ImGui::GetIO().DisplaySize;
 
     glm::mat4 proj = glm::lookAt(-g_ctx.rm->camera.data.view_dir, origin, g_ctx.rm->camera.data.up);
 
@@ -102,7 +102,7 @@ void ImGuiEngine::drawAxis()
         temp = proj * glm::vec4(points[i], 1.0f);
         temp /= temp.w;
         glm::vec3 point = glm::vec3(temp);
-        point.y = -point.y;
+        point.y         = -point.y;
         point *= scale;
         point.x += offset;
         point.y += screen_size.y - offset;

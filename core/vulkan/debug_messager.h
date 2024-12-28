@@ -8,9 +8,9 @@ struct Context;
 
 class DebugMessager {
     std::function<VkResult(VkInstance,
-        const VkDebugUtilsMessengerCreateInfoEXT*,
-        const VkAllocationCallbacks*,
-        VkDebugUtilsMessengerEXT*)>
+                           const VkDebugUtilsMessengerCreateInfoEXT*,
+                           const VkAllocationCallbacks*,
+                           VkDebugUtilsMessengerEXT*)>
         vkCreateDebugUtilsMessengerEXT;
     std::function<void(VkInstance, VkDebugUtilsMessengerEXT, const VkAllocationCallbacks*)>
         vkDestroyDebugUtilsMessengerEXT;

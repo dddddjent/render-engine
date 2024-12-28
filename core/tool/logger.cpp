@@ -15,7 +15,7 @@ void Logger::init(Configuration& config)
     if (std::filesystem::exists(logger_cfg.output)) {
         std::filesystem::remove(logger_cfg.output);
     }
-    file = spdlog::basic_logger_mt("file", logger_cfg.output);
+    file    = spdlog::basic_logger_mt("file", logger_cfg.output);
     console = spdlog::stdout_color_mt("console");
 
     spdlog::set_level(spdlog::level::trace);

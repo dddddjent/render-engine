@@ -10,7 +10,7 @@
 #endif
 
 namespace Vk {
-Context::Context() = default;
+Context::Context()  = default;
 Context::~Context() = default;
 
 void Context::init(const Configuration& config, GLFWwindow* window)
@@ -52,12 +52,12 @@ void Context::createInstance()
     }
 
     VkApplicationInfo appInfo {};
-    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "Simulation";
+    appInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo.pApplicationName   = "Simulation";
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "No Engine";
-    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_2;
+    appInfo.pEngineName        = "No Engine";
+    appInfo.engineVersion      = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.apiVersion         = VK_API_VERSION_1_2;
 
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
@@ -67,7 +67,7 @@ void Context::createInstance()
         extensions.push_back(e);
 
     const VkBool32 setting_validate_sync = VK_TRUE;
-    const VkLayerSettingEXT settings[] = {
+    const VkLayerSettingEXT settings[]   = {
         { validationLayers[0], "validate_sync", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_sync },
     };
     const VkLayerSettingsCreateInfoEXT layer_settings_create_info = {
@@ -76,15 +76,15 @@ void Context::createInstance()
     };
 
     VkInstanceCreateInfo createInfo {};
-    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pApplicationInfo = &appInfo;
-    createInfo.enabledExtensionCount = extensions.size();
+    createInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pApplicationInfo        = &appInfo;
+    createInfo.enabledExtensionCount   = extensions.size();
     createInfo.ppEnabledExtensionNames = extensions.data();
-    createInfo.enabledLayerCount = 0;
+    createInfo.enabledLayerCount       = 0;
     if (enableValidationLayers) {
-        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.enabledLayerCount   = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
-        createInfo.pNext = &layer_settings_create_info;
+        createInfo.pNext               = &layer_settings_create_info;
     } else {
         createInfo.enabledLayerCount = 0;
     }
@@ -168,7 +168,7 @@ bool Context::isDeviceSuitable(VkPhysicalDevice device)
     bool swapChainAdequate = false;
     if (extensionsSupported) {
         SwapChainSupport swapChainSupport = SwapChainSupport::querySwapChainSupport(device, surface);
-        swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+        swapChainAdequate                 = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     } else {
         WARN_CONSOLE("Some of the device extensions are not supported");
     }
@@ -211,9 +211,9 @@ void Context::createLogicalDeviceAndQueue()
     float queuePriority = 1.0f;
     for (uint32_t queueFamily : uniqueQueueFamilies) {
         VkDeviceQueueCreateInfo queueCreateInfo {};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfo.queueFamilyIndex = queueFamily;
-        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.queueCount       = 1;
         queueCreateInfo.pQueuePriorities = &queuePriority;
         queueCreateInfos.push_back(queueCreateInfo);
     }
@@ -234,13 +234,13 @@ void Context::createLogicalDeviceAndQueue()
     assert(descriptorIndexingFeatures.descriptorBindingStorageBufferUpdateAfterBind);
 
     VkDeviceCreateInfo createInfo {};
-    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-    createInfo.pQueueCreateInfos = queueCreateInfos.data();
-    createInfo.pEnabledFeatures = nullptr;
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.queueCreateInfoCount    = static_cast<uint32_t>(queueCreateInfos.size());
+    createInfo.pQueueCreateInfos       = queueCreateInfos.data();
+    createInfo.pEnabledFeatures        = nullptr;
+    createInfo.enabledExtensionCount   = static_cast<uint32_t>(deviceExtensions.size());
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-    createInfo.pNext = &deviceFeatures;
+    createInfo.pNext                   = &deviceFeatures;
     if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
         throw std::runtime_error("failed to create logical device!");
     }
@@ -289,7 +289,7 @@ VkExtent2D Context::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilitie
             static_cast<uint32_t>(height)
         };
 
-        actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        actualExtent.width  = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
         actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
         return actualExtent;
@@ -301,35 +301,35 @@ void Context::createSwapChain()
     SwapChainSupport swapChainSupport = SwapChainSupport::querySwapChainSupport(physicalDevice, surface);
 
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-    VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+    VkPresentModeKHR presentMode     = chooseSwapPresentMode(swapChainSupport.presentModes);
+    VkExtent2D extent                = chooseSwapExtent(swapChainSupport.capabilities);
 
     uint32_t indices[] = { queueFamilyIndices.graphicsFamily.value(), queueFamilyIndices.presentFamily.value() };
 
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
     VkSwapchainCreateInfoKHR createInfo {};
-    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface;
-    createInfo.minImageCount = imageCount;
-    createInfo.imageFormat = surfaceFormat.format;
-    createInfo.imageColorSpace = surfaceFormat.colorSpace;
-    createInfo.imageExtent = extent;
+    createInfo.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    createInfo.surface          = surface;
+    createInfo.minImageCount    = imageCount;
+    createInfo.imageFormat      = surfaceFormat.format;
+    createInfo.imageColorSpace  = surfaceFormat.colorSpace;
+    createInfo.imageExtent      = extent;
     createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     if (queueFamilyIndices.graphicsFamily != queueFamilyIndices.presentFamily) {
-        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        createInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = indices;
+        createInfo.pQueueFamilyIndices   = indices;
     } else {
-        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        createInfo.imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE;
         createInfo.queueFamilyIndexCount = 0; // Optional
-        createInfo.pQueueFamilyIndices = nullptr; // Optional
+        createInfo.pQueueFamilyIndices   = nullptr; // Optional
     }
-    createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+    createInfo.preTransform   = swapChainSupport.capabilities.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode = presentMode;
-    createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
+    createInfo.presentMode    = presentMode;
+    createInfo.clipped        = VK_TRUE;
+    createInfo.oldSwapchain   = VK_NULL_HANDLE;
     if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
         throw std::runtime_error("failed to create swap chain!");
     }
@@ -340,10 +340,10 @@ void Context::createSwapChain()
     for (int i = 0; i < imageCount; i++) {
         swapChainImages.emplace_back(std::make_unique<Image>());
 
-        auto& swapChainImage = swapChainImages.back();
+        auto& swapChainImage  = swapChainImages.back();
         swapChainImage->image = images[i];
         swapChainImage->CreateUUID();
-        swapChainImage->size = extent.width * extent.height * 4; // unorm
+        swapChainImage->size   = extent.width * extent.height * 4; // unorm
         swapChainImage->format = surfaceFormat.format;
         swapChainImage->extent = VkExtent3D { extent.width, extent.height, 1 };
         swapChainImage->TransitionLayoutSingleTime(*this, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
@@ -382,17 +382,17 @@ void Context::recreateSwapChain()
 void Context::createCommandPoolAndBuffer()
 {
     VkCommandPoolCreateInfo poolInfo {};
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
         throw std::runtime_error("failed to create command pool!");
     }
 
     VkCommandBufferAllocateInfo allocInfo {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = commandPool;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool        = commandPool;
+    allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t)MAX_FRAMES_IN_FLIGHT;
 
     if (vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS) {
@@ -450,7 +450,7 @@ void Context::createSyncObjectsExt()
 #endif
 
     VkSemaphoreCreateInfo semaphoreInfo = {};
-    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    semaphoreInfo.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     // TODO: ???
     memset(&semaphoreInfo, 0, sizeof(semaphoreInfo));
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -459,31 +459,31 @@ void Context::createSyncObjectsExt()
     WindowsSecurityAttributes winSecurityAttributes;
 
     VkExportSemaphoreWin32HandleInfoKHR vulkanExportSemaphoreWin32HandleInfoKHR = {};
-    vulkanExportSemaphoreWin32HandleInfoKHR.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    vulkanExportSemaphoreWin32HandleInfoKHR.pNext = NULL;
-    vulkanExportSemaphoreWin32HandleInfoKHR.pAttributes = &winSecurityAttributes;
-    vulkanExportSemaphoreWin32HandleInfoKHR.dwAccess = DXGI_SHARED_RESOURCE_READ | DXGI_SHARED_RESOURCE_WRITE;
-    vulkanExportSemaphoreWin32HandleInfoKHR.name = (LPCWSTR)NULL;
+    vulkanExportSemaphoreWin32HandleInfoKHR.sType                               = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
+    vulkanExportSemaphoreWin32HandleInfoKHR.pNext                               = NULL;
+    vulkanExportSemaphoreWin32HandleInfoKHR.pAttributes                         = &winSecurityAttributes;
+    vulkanExportSemaphoreWin32HandleInfoKHR.dwAccess                            = DXGI_SHARED_RESOURCE_READ | DXGI_SHARED_RESOURCE_WRITE;
+    vulkanExportSemaphoreWin32HandleInfoKHR.name                                = (LPCWSTR)NULL;
 #endif
 
     VkExportSemaphoreCreateInfoKHR vulkanExportSemaphoreCreateInfo = {};
-    vulkanExportSemaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR;
+    vulkanExportSemaphoreCreateInfo.sType                          = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR;
 
 #ifdef _WIN64
-    vulkanExportSemaphoreCreateInfo.pNext = &vulkanExportSemaphoreWin32HandleInfoKHR;
+    vulkanExportSemaphoreCreateInfo.pNext       = &vulkanExportSemaphoreWin32HandleInfoKHR;
     vulkanExportSemaphoreCreateInfo.handleTypes = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT;
 #else
-    vulkanExportSemaphoreCreateInfo.pNext = NULL;
+    vulkanExportSemaphoreCreateInfo.pNext       = NULL;
     vulkanExportSemaphoreCreateInfo.handleTypes = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT;
 #endif
 
     semaphoreInfo.pNext = &vulkanExportSemaphoreCreateInfo;
 
     if (vkCreateSemaphore(device, &semaphoreInfo, nullptr,
-            &cuUpdateSemaphore)
+                          &cuUpdateSemaphore)
             != VK_SUCCESS
         || vkCreateSemaphore(device, &semaphoreInfo, nullptr,
-               &vkUpdateSemaphore)
+                             &vkUpdateSemaphore)
             != VK_SUCCESS) {
         throw std::runtime_error(
             "failed to create synchronization objects for a CUDA-Vulkan!");

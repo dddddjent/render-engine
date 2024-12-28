@@ -7,7 +7,7 @@ using namespace Vk;
 UI::UI(const std::string& name, const std::string& color_buf_name, std::function<void(VkCommandBuffer)> fn)
     : RenderGraphNode(name)
 {
-    bool is_swapchain = color_buf_name == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME();
+    bool is_swapchain       = color_buf_name == RenderAttachmentDescription::SWAPCHAIN_IMAGE_NAME();
     attachment_descriptions = {
         {
             "color",
@@ -43,13 +43,13 @@ void UI::createFramebuffer()
         };
 
         VkFramebufferCreateInfo framebufferInfo {};
-        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = render_pass;
+        framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass      = render_pass;
         framebufferInfo.attachmentCount = static_cast<uint32_t>(views.size());
-        framebufferInfo.pAttachments = views.data();
-        framebufferInfo.width = g_ctx.vk.swapChainImages[i]->extent.width;
-        framebufferInfo.height = g_ctx.vk.swapChainImages[i]->extent.height;
-        framebufferInfo.layers = 1;
+        framebufferInfo.pAttachments    = views.data();
+        framebufferInfo.width           = g_ctx.vk.swapChainImages[i]->extent.width;
+        framebufferInfo.height          = g_ctx.vk.swapChainImages[i]->extent.height;
+        framebufferInfo.layers          = 1;
 
         if (vkCreateFramebuffer(g_ctx.vk.device, &framebufferInfo, nullptr, &framebuffers[i]) != VK_SUCCESS) {
             throw std::runtime_error("failed to create framebuffer!");
@@ -63,12 +63,12 @@ void UI::createRenderPass()
         { "color", VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE },
     };
     VkSubpassDependency dependency = {};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependency.srcSubpass          = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass          = 0;
+    dependency.srcStageMask        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstStageMask        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask       = 0;
+    dependency.dstAccessMask       = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
     render_pass = DefaultRenderPass(attachment_descriptions, helpers, dependency);
 }
@@ -78,13 +78,13 @@ void UI::record(uint32_t swapchain_index)
     setDefaultViewportAndScissor();
 
     VkRenderPassBeginInfo renderPassInfo {};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = render_pass;
-    renderPassInfo.framebuffer = framebuffers[swapchain_index];
+    renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass        = render_pass;
+    renderPassInfo.framebuffer       = framebuffers[swapchain_index];
     renderPassInfo.renderArea.offset = { 0, 0 };
     renderPassInfo.renderArea.extent = toVkExtent2D(g_ctx.vk.swapChainImages[swapchain_index]->extent);
-    renderPassInfo.clearValueCount = 0;
-    renderPassInfo.pClearValues = nullptr;
+    renderPassInfo.clearValueCount   = 0;
+    renderPassInfo.pClearValues      = nullptr;
     vkCmdBeginRenderPass(g_ctx.vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     fn(g_ctx.vk.commandBuffer);

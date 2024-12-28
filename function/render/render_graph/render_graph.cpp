@@ -8,14 +8,14 @@ void RenderGraph::clearAttachments()
         attachment.second.image.TransitionLayout(g_ctx.vk, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
         VkImageSubresourceRange range = {};
-        range.baseMipLevel = 0;
-        range.levelCount = 1;
-        range.baseArrayLayer = 0;
-        range.layerCount = 1;
+        range.baseMipLevel            = 0;
+        range.levelCount              = 1;
+        range.baseArrayLayer          = 0;
+        range.layerCount              = 1;
         if (static_cast<uint8_t>(attachment.second.type & RenderAttachmentType::Color) != 0) {
             VkClearColorValue clearColor = {};
-            clearColor = { { 0.0f, 0.0f, 0.0f, 1.0f } };
-            range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            clearColor                   = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+            range.aspectMask             = VK_IMAGE_ASPECT_COLOR_BIT;
             vkCmdClearColorImage(
                 g_ctx.vk.commandBuffer,
                 attachment.second.image.image,
@@ -23,8 +23,8 @@ void RenderGraph::clearAttachments()
         }
         if (static_cast<uint8_t>(attachment.second.type & RenderAttachmentType::Depth) != 0) {
             VkClearDepthStencilValue clearValue = {};
-            clearValue = { 1.0f, 0 };
-            range.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+            clearValue                          = { 1.0f, 0 };
+            range.aspectMask                    = VK_IMAGE_ASPECT_DEPTH_BIT;
             vkCmdClearDepthStencilImage(
                 g_ctx.vk.commandBuffer,
                 attachment.second.image.image,
@@ -66,7 +66,7 @@ void RenderGraph::initAttachments()
                 assert(it->second.format == desc_pair.second.format && "Two connected attachments have different formats");
                 it->second.usage |= desc_pair.second.usage;
                 it->second.type = it->second.type | desc_pair.second.type;
-                it->second.rw = it->second.rw | desc_pair.second.rw;
+                it->second.rw   = it->second.rw | desc_pair.second.rw;
             }
         }
     }
@@ -88,8 +88,8 @@ void RenderGraph::prepareAttachmentsForNode(const auto& node, uint32_t swapchain
 void RenderGraph::record(uint32_t swapchain_index)
 {
     VkCommandBufferBeginInfo beginInfo {};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags            = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     beginInfo.pInheritanceInfo = nullptr; // Optional
     if (vkBeginCommandBuffer(g_ctx.vk.commandBuffer, &beginInfo) != VK_SUCCESS) {
         throw std::runtime_error("failed to begin recording command buffer!");
@@ -104,7 +104,7 @@ void RenderGraph::record(uint32_t swapchain_index)
     }
     while (!queue.empty()) {
         std::string name = queue.front();
-        auto& node = nodes[name];
+        auto& node       = nodes[name];
         queue.pop();
         degree[name] = -1;
 

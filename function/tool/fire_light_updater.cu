@@ -13,7 +13,7 @@ __device__ float light_sample_gain = 0.1f;
 void FireLightsUpdater::init(const FieldsConfiguration& config)
 {
     FireConfiguration fire_cfg = config.fire_configuration;
-    sample_dim = glm::ivec3(
+    sample_dim                 = glm::ivec3(
         fire_cfg.light_sample_dim[0],
         fire_cfg.light_sample_dim[1],
         fire_cfg.light_sample_dim[2]);
@@ -43,8 +43,8 @@ void FireLightsUpdater::init(const FieldsConfiguration& config)
 
 void FireLightsUpdater::loadFireColorTexture(const std::string& path)
 {
-    npy::npy_data d = npy::read_npy<float>(path);
-    const auto& image_data = d.data;
+    npy::npy_data d         = npy::read_npy<float>(path);
+    const auto& image_data  = d.data;
     const auto& image_shape = d.shape;
     assert(image_shape.size() == 2);
     assert(image_shape[1] == 3);
@@ -59,21 +59,21 @@ void FireLightsUpdater::loadFireColorTexture(const std::string& path)
     cudaChannelFormatDesc formatDesc = cudaCreateChannelDesc<float4>();
     cudaMallocArray(&fire_color_array, &formatDesc, image_shape[0], 1);
     cudaMemcpy2DToArray(fire_color_array, 0, 0, image_data4.data(),
-        image_shape[0] * sizeof(float4),
-        image_shape[0] * sizeof(float4),
-        1, cudaMemcpyHostToDevice);
+                        image_shape[0] * sizeof(float4),
+                        image_shape[0] * sizeof(float4),
+                        1, cudaMemcpyHostToDevice);
 
     cudaResourceDesc res_desc;
     memset(&res_desc, 0, sizeof(res_desc));
-    res_desc.resType = cudaResourceTypeArray;
+    res_desc.resType         = cudaResourceTypeArray;
     res_desc.res.array.array = fire_color_array;
     cudaTextureDesc tex_desc;
     {
         memset(&tex_desc, 0, sizeof(tex_desc));
-        tex_desc.addressMode[0] = cudaAddressModeClamp;
-        tex_desc.addressMode[1] = cudaAddressModeClamp;
-        tex_desc.filterMode = cudaFilterModeLinear;
-        tex_desc.readMode = cudaReadModeElementType;
+        tex_desc.addressMode[0]   = cudaAddressModeClamp;
+        tex_desc.addressMode[1]   = cudaAddressModeClamp;
+        tex_desc.filterMode       = cudaFilterModeLinear;
+        tex_desc.readMode         = cudaReadModeElementType;
         tex_desc.normalizedCoords = 1;
     }
     cudaCreateTextureObject(&fire_color_texture, &res_desc, &tex_desc, NULL);
@@ -91,9 +91,9 @@ __global__ void updateKernel(
     auto tid = get_tid();
 
     auto& out = out_intensities[tid];
-    int z = tid / (sample_dim.x * sample_dim.y);
-    int y = (tid % (sample_dim.x * sample_dim.y)) / sample_dim.x;
-    int x = tid % sample_dim.x;
+    int z     = tid / (sample_dim.x * sample_dim.y);
+    int y     = (tid % (sample_dim.x * sample_dim.y)) / sample_dim.x;
+    int x     = tid % sample_dim.x;
     if (x >= sample_dim.x || y >= sample_dim.y || z >= sample_dim.z) {
         return;
     }
