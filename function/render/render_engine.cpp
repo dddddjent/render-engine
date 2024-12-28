@@ -19,15 +19,23 @@ void RenderEngine::init_core(const Configuration& config)
     initGLFW();
 }
 
-void RenderEngine::init_render(const Configuration& config, GlobalContext* g_ctx, std::function<void(VkCommandBuffer)> fn)
+void RenderEngine::init_render(const Configuration& config, GlobalContext* g_ctx,
+                               std::function<void(VkCommandBuffer)> fn, std::unique_ptr<RenderGraph> custom_render_graph)
 {
     this->g_ctx = g_ctx;
     initRenderGraph(fn);
 }
 
-void RenderEngine::initRenderGraph(std::function<void(VkCommandBuffer)> fn)
+void RenderEngine::initRenderGraph(std::function<void(VkCommandBuffer)> fn, std::unique_ptr<RenderGraph> custom_render_graph)
 {
     JSON_GET(RenderGraphConfiguration, render_graph_cfg, (*config), "render_graph");
+
+    if (custom_render_graph != nullptr) { // use custom render graph
+        render_graph = std::move(custom_render_graph);
+        render_graph->registerUIRenderfunction(fn);
+        render_graph->init(*config);
+        return;
+    }
 
     if (render_graph_cfg.name == "default") {
         render_graph = std::make_unique<DefaultGraph>();

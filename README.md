@@ -40,9 +40,16 @@ engine.cleanup();
 
 ### Custom Scripts
 
+- The engine init in the following order:
+
+  - `g_ctx`
+  - `render_engine`
+  - `physics_engine` -`ui_engine`
+
 - Base class `Script` in `function/script/script.h`
   - Override `init()`, `step()`, `destroy()`
   - They happen before the internal engine starts, after the internal systems are stepped, and before the internal systems are destroyed.
+  - There are also some other event functions
 - Use a `std::vector<std::unique_ptr<Script>>` to submit them to the engine.
 - The engine will stop when `g_ctx.continue_to_run` is false.
 

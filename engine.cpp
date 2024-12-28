@@ -5,7 +5,8 @@
 
 void Engine::init(Configuration& config,
                   RenderEngine* render_engine, UIEngine* ui_engine, PhysicsEngine* physics_engine,
-                  std::vector<std::unique_ptr<Script>>&& scripts)
+                  std::vector<std::unique_ptr<Script>>&& scripts,
+                  std::unique_ptr<RenderGraph> render_graph)
 {
     logger.init(config);
     INFO_ALL("Initializing the engine...");
@@ -17,15 +18,22 @@ void Engine::init(Configuration& config,
 
     render_engine->init_core(config);
     window = render_engine->getGLFWWindow();
+
+    for (auto& script : this->scripts) {
+        script->before_g_ctx(config);
+    }
     g_ctx.init(config, window);
 
+    for (auto& script : this->scripts) {
+        script->before_internal_engine_init(config);
+    }
     render_engine->init_render(config, &g_ctx, ui_engine->getDrawUIFunction());
     physics_engine->init(config, &g_ctx);
 
     ui_engine->init(config, render_engine->toUI()); // get renderpass from render graph
 
     for (auto& script : this->scripts) {
-        script->init();
+        script->init(config);
     }
 
     INFO_ALL("Engine Initialized");

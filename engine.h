@@ -31,7 +31,8 @@ class Engine {
 public:
     void init(Configuration& config,
               RenderEngine* render_engine, UIEngine* ui_engine, PhysicsEngine* physics_engine,
-              std::vector<std::unique_ptr<Script>>&& scripts = {});
+              std::vector<std::unique_ptr<Script>>&& scripts = {},
+              std::unique_ptr<RenderGraph> render_graph      = nullptr);
     void run();
     void cleanup();
 };

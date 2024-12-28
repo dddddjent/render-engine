@@ -17,7 +17,8 @@ struct GlobalContext;
 class RenderEngine {
 public:
     void init_core(const Configuration& config);
-    void init_render(const Configuration& config, GlobalContext* g_ctx, std::function<void(VkCommandBuffer)> fn);
+    void init_render(const Configuration& config, GlobalContext* g_ctx,
+                     std::function<void(VkCommandBuffer)> fn, std::unique_ptr<RenderGraph> custom_render_graph = nullptr);
     void render();
     GLFWwindow* getGLFWWindow();
     void sync();
@@ -30,7 +31,7 @@ private:
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
     void initGLFW();
-    void initRenderGraph(std::function<void(VkCommandBuffer)> fn);
+    void initRenderGraph(std::function<void(VkCommandBuffer)> fn, std::unique_ptr<RenderGraph> custom_render_graph = nullptr);
     void draw();
     void onResize();
 
