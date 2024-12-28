@@ -45,8 +45,30 @@ void ResourceManager::load(Configuration& config)
     recorder.init(config);
 }
 
+void ResourceManager::addResource(std::unique_ptr<Resource> resource)
+{
+    if (resources.find(resource->name) != resources.end()) {
+        throw std::runtime_error("resource already exists: " + resource->name);
+    }
+    resources[resource->name] = std::move(resource);
+}
+
+void ResourceManager::removeResource(const std::string& name)
+{
+    auto it = resources.find(name);
+    if (it == resources.end()) {
+        throw std::runtime_error("resource not found: " + name);
+    }
+    it->second->destroy();
+    resources.erase(name);
+}
+
 void ResourceManager::cleanup()
 {
+    for (auto& resource : resources) {
+        resource.second->destroy();
+    }
+
     recorder.destroy();
 
     camera.destroy();

@@ -2,6 +2,7 @@
 
 #include "core/config/config.h"
 #include "core/tool/recorder.h"
+#include "function/resource_manager/resource.h"
 #include "function/type/camera.h"
 #include "function/type/field.h"
 #include "function/type/light.h"
@@ -23,7 +24,11 @@ public:
 
     Recorder recorder;
 
+    std::unordered_map<std::string, std::unique_ptr<Resource>> resources;
+
     void load(Configuration& config);
+    void addResource(std::unique_ptr<Resource> resource);
+    void removeResource(const std::string& name);
     void cleanup();
 
 private:
