@@ -1,5 +1,6 @@
 #include "config.h"
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -19,8 +20,12 @@ struct adl_serializer<PropertyVariant> {
         case 2:
             j = std::get<std::vector<float>>(v);
             break;
+        case 3:
+            j = std::get<bool>(v);
+            break;
         default:
-            throw std::runtime_error("Can't parse this variant type");
+            // j = std::get<json>(v);
+            throw std::runtime_error("Unsupported type");
         }
     }
 
@@ -32,8 +37,11 @@ struct adl_serializer<PropertyVariant> {
             v = j.get<float>();
         } else if (j.is_array()) {
             v = j.get<std::vector<float>>();
+        } else if (j.is_boolean()) {
+            v = j.get<bool>();
         } else {
-            throw std::runtime_error("Data can't be parsed to the variant's types");
+            // v = j.get<json>();
+            throw std::runtime_error("Unsupported type");
         }
     }
 };
@@ -169,7 +177,18 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 Configuration Configuration::load(const std::string& config_path)
 {
     std::ifstream f(config_path);
+
+    json j;
+    try {
+        j = json::parse(f);
+    } catch (json::parse_error& e) {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
+    JSON_GET(ObjectConfiguration, o, j, "recorder");
     Configuration config = json::parse(f);
+    f.seekg(0);
+
     return config;
 }
 

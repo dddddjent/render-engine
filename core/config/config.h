@@ -2,12 +2,18 @@
 
 #include <array>
 #include <cstdint>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
 #include <variant>
 #include <vector>
 
-using PropertyVariant = std::variant<std::string, float, std::vector<float>>;
+using PropertyVariant = std::variant<
+    std::string,
+    float,
+    std::vector<float>,
+    bool>;
+// nlohmann::json>;
 
 struct TextureConfiguration {
     std::string name;
@@ -149,3 +155,15 @@ struct RigidCoupleSimConfiguration {
     DriverConfiguration driver;
     std::string output_dir;
 };
+
+#define JSON_GET(type, name, j, key)                                                                                                 \
+    type name;                                                                                                                       \
+    try {                                                                                                                            \
+        auto&& temp = j[key];                                                                                                        \
+        if (temp == nullptr) {                                                                                                       \
+            throw std::runtime_error(std::string("Key '") + key + std::string("' not found"));                                       \
+        }                                                                                                                            \
+        name = std::move(temp);                                                                                                      \
+    } catch (json::out_of_range & e) {                                                                                               \
+        throw std::runtime_error(std::string("Can't cast JSON[\"") + key + std::string("\"] to type '") + std::string(#type) + "'"); \
+    }
