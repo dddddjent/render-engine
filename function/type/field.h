@@ -57,7 +57,7 @@ struct SelfIlluminationLights {
     Vk::Buffer buffer;
 
     void destroy();
-    void init(const FieldsConfiguration& cfg);
+    void init(FieldsConfiguration& cfg);
 };
 
 struct Fields {
@@ -87,7 +87,7 @@ struct Fields {
     static glm::mat4x4 toLocaluvw(const Camera& camera, const glm::vec3& start_pos, const glm::vec3& size);
 
     void destroy();
-    static Fields fromConfiguration(const FieldsConfiguration& cfg);
+    static Fields fromConfiguration(FieldsConfiguration& cfg);
 #ifdef _WIN64
     HANDLE getVkFieldMemHandle(int index);
     HANDLE getVkFieldMemHandle(const std::string& field_name);
@@ -97,6 +97,6 @@ struct Fields {
 #endif
 
 private:
-    void initFireLights(const FieldsConfiguration& cfg);
-    void initFireColorImage(const FieldsConfiguration& cfg);
+    void initFireLights(FieldsConfiguration& cfg);
+    void initFireColorImage(FieldsConfiguration& cfg);
 };

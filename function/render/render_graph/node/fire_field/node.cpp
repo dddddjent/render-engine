@@ -146,7 +146,7 @@ void FireFieldNode::createPipeline(Configuration& cfg)
         replaceDefine("FIELD_COUNT", (int)fields_cfg.arr.size(), frag_shader_path, generated_path);
         replaceDefine("MAX_FIELDS", (int)MAX_FIELDS, generated_path, generated_path);
         replaceDefine("FIRE_SELF_ILLUMINATION_BOOST",
-            (int)fields_cfg.fire_configuration.self_illumination_boost, generated_path, generated_path);
+            (int)fields_cfg.fire_configuration.at("self_illumination_boost"), generated_path, generated_path);
         replaceInclude("../../shader/common.glsl",
             "../../common.glsl",
             generated_path, generated_path);

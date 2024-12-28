@@ -28,4 +28,6 @@ public:
 
 private:
     void loadDefaultTextures();
+
+    Configuration config;
 };

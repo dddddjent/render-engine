@@ -126,7 +126,7 @@ void SelfIlluminationLights::destroy()
     Buffer::Delete(g_ctx.vk, buffer);
 }
 
-void SelfIlluminationLights::init(const FieldsConfiguration& cfg)
+void SelfIlluminationLights::init(FieldsConfiguration& cfg)
 {
     VkDeviceSize bufferSize = sizeof(glm::vec4) * positions.size();
     buffer = Buffer::New(
@@ -154,13 +154,14 @@ void Fields::destroy()
     }
 }
 
-void Fields::initFireLights(const FieldsConfiguration& cfg)
+void Fields::initFireLights(FieldsConfiguration& cfg)
 {
     lights.name = "fire_lights";
 
-    lights_dim.x = cfg.fire_configuration.light_sample_dim[0];
-    lights_dim.y = cfg.fire_configuration.light_sample_dim[1];
-    lights_dim.z = cfg.fire_configuration.light_sample_dim[2];
+    FireConfiguration fire_cfg = cfg.fire_configuration;
+    lights_dim.x = fire_cfg.light_sample_dim[0];
+    lights_dim.y = fire_cfg.light_sample_dim[1];
+    lights_dim.z = fire_cfg.light_sample_dim[2];
     int total_num = lights_dim.x * lights_dim.y * lights_dim.z;
 
     int temperature_field_idx = -1;
@@ -199,9 +200,9 @@ void Fields::initFireLights(const FieldsConfiguration& cfg)
     g_ctx.dm.registerResource(lights.buffer, DescriptorType::Storage);
 }
 
-void Fields::initFireColorImage(const FieldsConfiguration& cfg)
+void Fields::initFireColorImage(FieldsConfiguration& cfg)
 {
-    const auto& fire_colors_path = cfg.fire_configuration.fire_colors_path;
+    const std::string& fire_colors_path = cfg.fire_configuration.at("fire_colors_path");
     npy::npy_data d = npy::read_npy<float>(fire_colors_path);
     const auto& image_data = d.data;
     const auto& image_shape = d.shape;
@@ -228,7 +229,7 @@ void Fields::initFireColorImage(const FieldsConfiguration& cfg)
     g_ctx.dm.registerResource(fire_color_img, DescriptorType::CombinedImageSampler);
 }
 
-Fields Fields::fromConfiguration(const FieldsConfiguration& cfg)
+Fields Fields::fromConfiguration(FieldsConfiguration& cfg)
 {
     Fields fields;
     fields.step = cfg.step;
@@ -260,10 +261,11 @@ Fields Fields::fromConfiguration(const FieldsConfiguration& cfg)
     }
 
     if (fields.has_temperature) {
+        FireConfiguration fire_cfg = cfg.fire_configuration;
         fields.initFireLights(cfg);
         fields.initFireColorImage(cfg);
 
-        for (const auto& light_config_pos : cfg.fire_configuration.self_illumination_lights)
+        for (const auto& light_config_pos : fire_cfg.self_illumination_lights)
             fields.self_illumination_lights.positions.emplace_back(
                 glm::vec4(arrayToVec3(light_config_pos), 0.f));
         fields.self_illumination_lights.init(cfg);

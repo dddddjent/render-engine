@@ -5,6 +5,8 @@ using namespace Vk;
 
 void ResourceManager::load(Configuration& config)
 {
+    this->config = config;
+
     JSON_GET(CameraConfiguration, camera_cfg, config, "camera");
     camera = Camera::fromConfiguration(camera_cfg);
     JSON_GET(std::vector<LightConfiguration>, lights_cfg, config, "lights");
@@ -29,8 +31,11 @@ void ResourceManager::load(Configuration& config)
         materials[material.name] = material;
     }
 
-    JSON_GET(FieldsConfiguration, fields_cfg, config, "fields");
-    fields = Fields::fromConfiguration(fields_cfg);
+    json fields_json = config["fields"];
+    if (!fields_json.is_null()) {
+        FieldsConfiguration fields_cfg = std::move(fields_json.get<FieldsConfiguration>());
+        fields = Fields::fromConfiguration(fields_cfg);
+    }
 
     JSON_GET(std::vector<ObjectConfiguration>, objects_cfg, config, "objects");
     for (auto& cfg : objects_cfg) {
@@ -58,7 +63,11 @@ void ResourceManager::cleanup()
     for (auto& object : objects) {
         object.destroy();
     }
-    fields.destroy();
+
+    json fields_cfg = config["fields"];
+    if (!fields_cfg.is_null()) {
+        fields.destroy();
+    }
 }
 
 void ResourceManager::loadDefaultTextures()

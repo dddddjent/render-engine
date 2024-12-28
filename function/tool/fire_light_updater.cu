@@ -12,14 +12,15 @@ __device__ float light_sample_gain = 0.1f;
 
 void FireLightsUpdater::init(const FieldsConfiguration& config)
 {
+    FireConfiguration fire_cfg = config.fire_configuration;
     sample_dim = glm::ivec3(
-        config.fire_configuration.light_sample_dim[0],
-        config.fire_configuration.light_sample_dim[1],
-        config.fire_configuration.light_sample_dim[2]);
+        fire_cfg.light_sample_dim[0],
+        fire_cfg.light_sample_dim[1],
+        fire_cfg.light_sample_dim[2]);
     sample_avg_region = glm::ivec3(
-        config.fire_configuration.light_sample_avg_region[0],
-        config.fire_configuration.light_sample_avg_region[1],
-        config.fire_configuration.light_sample_avg_region[2]);
+        fire_cfg.light_sample_avg_region[0],
+        fire_cfg.light_sample_avg_region[1],
+        fire_cfg.light_sample_avg_region[2]);
     for (const auto& field : config.arr) {
         if (field.name == "fire_field") {
             field_dim = arrayToVec3(field.dimension);
@@ -31,12 +32,12 @@ void FireLightsUpdater::init(const FieldsConfiguration& config)
         ceil(field_dim.y / (float)sample_dim.y),
         ceil(field_dim.z / (float)sample_dim.z));
 
-    loadFireColorTexture(config.fire_configuration.fire_colors_path);
+    loadFireColorTexture(fire_cfg.fire_colors_path);
 
     cudaMalloc(&d_out_intensities, sample_dim.x * sample_dim.y * sample_dim.z * sizeof(glm::vec3));
     out_intensities.resize(sample_dim.x * sample_dim.y * sample_dim.z);
 
-    auto light_sample_gain_host = config.fire_configuration.light_sample_gain;
+    auto light_sample_gain_host = fire_cfg.light_sample_gain;
     cudaMemcpyToSymbol(light_sample_gain, &light_sample_gain_host, sizeof(float));
 }
 

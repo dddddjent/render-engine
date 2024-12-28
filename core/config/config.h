@@ -70,7 +70,7 @@ struct FireConfiguration {
 
 struct FieldsConfiguration {
     float step;
-    FireConfiguration fire_configuration;
+    json fire_configuration;
     std::vector<FieldConfiguration> arr;
 };
 
@@ -221,7 +221,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     self_illumination_boost,
     fire_colors_path);
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     FieldsConfiguration,
     step,
     fire_configuration,
