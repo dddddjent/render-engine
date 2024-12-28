@@ -75,12 +75,5 @@ vec4 fastFXAA()
 
 void main()
 {
-    ivec2 fragCoord = ivec2(gl_FragCoord.xy);
-    if (fragCoord.x >= camera.width - 1 || fragCoord.y >= camera.height - 1
-        || fragCoord.x <= 0 || fragCoord.y <= 0) {
-        outColor = vec4(vec3(0.0f), 1.0f);
-        return;
-    }
-
     outColor = fastFXAA();
 }
