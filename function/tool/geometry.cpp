@@ -215,6 +215,9 @@ GeometryGenerator::cube(glm::vec3 pos, glm::vec3 scale)
 std::pair<std::vector<Vertex>, std::vector<uint32_t>>
 GeometryGenerator::plane(glm::vec3 pos, glm::vec3 normal, std::vector<float> size)
 {
+    // if the normal is in the y positive direction, then x is u, z is v
+    // in external app, horizontal is u, vertical is v
+    // uv = (0, 0) is (-0.5, y, -0.5), at the top left corner of the picture
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
 
@@ -225,7 +228,7 @@ GeometryGenerator::plane(glm::vec3 pos, glm::vec3 normal, std::vector<float> siz
     }
 
     glm::vec3 tangent   = glm::normalize(glm::cross(normal, up));
-    glm::vec3 bitangent = glm::normalize(glm::cross(normal, tangent));
+    glm::vec3 bitangent = glm::normalize(glm::cross(tangent, normal));
     vertices            = {
         { pos + -0.5f * size[0] * tangent + -0.5f * size[1] * bitangent, normal, { 0.0f, 0.0f } },
         { pos + 0.5f * size[0] * tangent + -0.5f * size[1] * bitangent, normal, { 1.0f, 0.0f } },
@@ -233,8 +236,8 @@ GeometryGenerator::plane(glm::vec3 pos, glm::vec3 normal, std::vector<float> siz
         { pos + -0.5f * size[0] * tangent + 0.5f * size[1] * bitangent, normal, { 0.0f, 1.0f } },
     };
     indices = {
-        0, 1, 2,
-        0, 2, 3
+        0, 2, 1,
+        0, 3, 2
     };
 
     assert(vertices.size() < UINT16_MAX);
