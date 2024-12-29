@@ -15,6 +15,8 @@ add_requires("tinyobjloader fe9e7130a0eee720a28f39b33852108217114076")
 add_requires("nlohmann_json")
 add_requires("vtk 9.3.1")
 
+set_policy("build.cuda.devlink", true)
+
 target("engine")
     if is_plat("windows") then
         add_rules("plugin.vsxmake.autoupdate")
