@@ -27,7 +27,10 @@ void Engine::init(Configuration& config,
     for (auto& script : this->scripts) {
         script->before_internal_engine_init(config);
     }
-    render_engine->init_render(config, &g_ctx, ui_engine->getDrawUIFunction());
+    if(render_graph != nullptr) {
+        INFO_ALL("Using custom render graph");
+    }
+    render_engine->init_render(config, &g_ctx, ui_engine->getDrawUIFunction(), std::move(render_graph));
     physics_engine->init(config, &g_ctx);
 
     ui_engine->init(config, render_engine->toUI()); // get renderpass from render graph

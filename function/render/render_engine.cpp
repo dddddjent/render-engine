@@ -23,7 +23,7 @@ void RenderEngine::init_render(const Configuration& config, GlobalContext* g_ctx
                                std::function<void(VkCommandBuffer)> fn, std::unique_ptr<RenderGraph> custom_render_graph)
 {
     this->g_ctx = g_ctx;
-    initRenderGraph(fn);
+    initRenderGraph(fn, std::move(custom_render_graph));
 }
 
 void RenderEngine::initRenderGraph(std::function<void(VkCommandBuffer)> fn, std::unique_ptr<RenderGraph> custom_render_graph)
