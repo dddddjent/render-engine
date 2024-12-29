@@ -142,7 +142,7 @@ Camera Camera::fromConfiguration(CameraConfiguration& config)
 
     camera.data.view         = glm::lookAt(camera.data.eye_w, camera.data.eye_w + camera.data.view_dir, camera.data.up);
     camera.data.aspect_ratio = camera.data.width / (float)camera.data.height;
-    camera.data.proj         = glm::perspective(glm::radians(camera.data.fov_y), camera.data.aspect_ratio, 0.1f, 100.0f);
+    camera.data.proj         = glm::perspective(glm::radians(camera.data.fov_y), camera.data.aspect_ratio, 0.01f, 100.0f);
     camera.data.proj[1][1] *= -1;
     camera.data.focal_distance = 0.1f;
 
