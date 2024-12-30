@@ -80,10 +80,11 @@ Requires a config.json
 
 - Mesh: several different types
 
-  - Sphere: pos, radius, tessellation
-  - Cube: pos, scale
-  - Plane: pos, normal, size
-  - obj: path (only one mesh per object)
+  - sphere: pos, radius, tessellation
+  - cube: pos, scale
+  - plane: pos, normal, size
+  - file: path (only one mesh per object)
+    - flip_uv: whether flip the uv (load opengl format)
 
 - Material: use reference to find textures
 
