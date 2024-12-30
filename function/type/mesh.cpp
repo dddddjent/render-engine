@@ -74,7 +74,7 @@ Mesh Mesh::fileMesh(MeshConfiguration& config)
 
     std::string inputfile = config.at("path").get<std::string>();
 
-    auto flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace;
+    auto flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_GenNormals;
     if (config["flip_uv"] == nullptr || config["flip_uv"].get<bool>()) {
         flags |= aiProcess_FlipUVs;
     }

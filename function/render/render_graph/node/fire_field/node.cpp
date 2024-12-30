@@ -136,7 +136,7 @@ void FireFieldNode::createPipeline(Configuration& cfg)
         JSON_GET(RenderGraphConfiguration, rg_cfg, cfg, "render_graph");
         auto vertShaderCode = readFile(rg_cfg.shader_directory + "/fire_field/node.vert.spv");
 
-        auto frag_shader_path = std::filesystem::path(cfg.at("engine_directory")) / "function/render/render_graph/node/fire_field/node.frag";
+        auto frag_shader_path = std::filesystem::path(cfg.at("engine_directory").get<std::string>()) / "function/render/render_graph/node/fire_field/node.frag";
         auto filename         = frag_shader_path.filename().string();
         auto generated_path   = rg_cfg.shader_directory + "/fire_field/generated/" + filename;
         auto generated_spv    = rg_cfg.shader_directory + "/fire_field/" + (filename + ".spv");

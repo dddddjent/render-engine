@@ -47,7 +47,7 @@ target("engine")
     add_packages("boost", {public=true})
     add_packages("tinyobjloader")
     add_packages("libtiff", "libpng", "libjpeg-turbo")
-    add_packages("nlohmann_json")
+    add_packages("nlohmann_json", {public=true})
     add_packages("vtk")
     add_packages("assimp")
 
