@@ -1,0 +1,29 @@
+[project]
+name = "rtf"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    { name = "none", email = "none" },
+]
+dependencies = [
+    "pyvista>=0.44.1",
+    "numpy>=2.1.2",
+    "taichi>=1.7.2",
+    "pillow>=11.0.0",
+    "trimesh>=4.5.3",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pyright]
+typeCheckingMode = "off"
+
+[dependency-groups]
+dev = [
+    "debugpy>=1.8.11",
+]

@@ -5,6 +5,9 @@
 #include "function/tool/geometry.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 #include <boost/functional/hash.hpp>
 
 using namespace Vk;
@@ -37,8 +40,8 @@ Mesh Mesh::fromConfiguration(MeshConfiguration& config)
         mesh = cubeMesh(config);
     } else if (type == "plane") {
         mesh = planeMesh(config);
-    } else if (type == "obj") {
-        mesh = objMesh(config);
+    } else if (type == "file") {
+        mesh = fileMesh(config);
     } else {
         throw std::runtime_error("Mesh type not supported");
     }
@@ -63,6 +66,52 @@ void Mesh::initBuffersFromData()
         VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     indexBuffer.Update(g_ctx.vk, data.indices.data(), indexBuffer.size);
+}
+
+Mesh Mesh::fileMesh(MeshConfiguration& config)
+{
+    Mesh mesh;
+
+    std::string inputfile = config.at("path").get<std::string>();
+
+    auto flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace;
+    if (config["flip_uv"] == nullptr || config["flip_uv"].get<bool>()) {
+        flags |= aiProcess_FlipUVs;
+    }
+
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(inputfile, flags);
+    if (!scene) {
+        ERROR_ALL("Assimp: " + std::string(importer.GetErrorString()));
+        throw std::runtime_error("Assimp: " + std::string(importer.GetErrorString()));
+    }
+    assert(scene->mNumMeshes == 1 && "Only one mesh in a file is supported");
+
+    const aiMesh* ai_mesh = scene->mMeshes[0];
+    assert(ai_mesh->GetNumUVChannels() == 1 && "Only one UV channel is supported");
+
+    mesh.data.vertices.resize(ai_mesh->mNumVertices);
+    for (uint32_t i = 0; i < ai_mesh->mNumVertices; i++) {
+        mesh.data.vertices[i].pos = glm::vec3(
+            ai_mesh->mVertices[i].x, ai_mesh->mVertices[i].y, ai_mesh->mVertices[i].z);
+        mesh.data.vertices[i].normal = glm::vec3(
+            ai_mesh->mNormals[i].x, ai_mesh->mNormals[i].y, ai_mesh->mNormals[i].z);
+        mesh.data.vertices[i].tangent = glm::vec3(
+            ai_mesh->mTangents[i].x, ai_mesh->mTangents[i].y, ai_mesh->mTangents[i].z);
+        mesh.data.vertices[i].uv = glm::vec2(
+            ai_mesh->mTextureCoords[0][i].x, ai_mesh->mTextureCoords[0][i].y);
+    }
+
+    mesh.data.indices.resize(ai_mesh->mNumFaces * 3);
+    for (uint32_t i = 0; i < ai_mesh->mNumFaces; i++) {
+        assert(ai_mesh->mFaces[i].mNumIndices == 3 && "Only triangles are supported");
+        for (uint32_t j = 0; j < 3; j++)
+            mesh.data.indices[i * 3 + j] = ai_mesh->mFaces[i].mIndices[j];
+    }
+
+    mesh.initBuffersFromData();
+
+    return mesh;
 }
 
 Mesh Mesh::sphereMesh(MeshConfiguration& config)

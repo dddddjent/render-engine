@@ -26,6 +26,7 @@ private:
     static Mesh cubeMesh(MeshConfiguration& config);
     static Mesh planeMesh(MeshConfiguration& config);
     static Mesh objMesh(MeshConfiguration& config);
+    static Mesh fileMesh(MeshConfiguration& config);
 
     static glm::vec3 computeTangent(
         const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3,
