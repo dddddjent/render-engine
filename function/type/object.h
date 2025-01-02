@@ -26,7 +26,7 @@ struct Object : public Resource {
 #else
     int getVkVertexMemHandle();
 #endif
-    virtual constexpr std::string type() const override { return "Object"; }
+    virtual std::string type() const override { return "Object"; }
     virtual void destroy() override;
     static Object fromConfiguration(ObjectConfiguration& config);
 };

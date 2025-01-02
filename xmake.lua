@@ -12,7 +12,7 @@ add_requires("libtiff 4.7.0")
 add_requires("libpng 1.6.44")
 add_requires("libjpeg-turbo 3.0.4")
 add_requires("tinyobjloader fe9e7130a0eee720a28f39b33852108217114076")
-add_requires("nlohmann_json")
+add_requires("nlohmann_json 3.11.3")
 add_requires("vtk 9.3.1")
 add_requires("assimp 5.4.3")
 
