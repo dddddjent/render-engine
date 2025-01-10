@@ -78,10 +78,6 @@ struct FieldsConfiguration {
     std::vector<FieldConfiguration> arr;
 };
 
-struct RigidConfiguration {
-    bool use_rigid;
-};
-
 struct EmitterConfiguration {
     bool use_emitter;
     std::array<int, 3> tile_dim;
@@ -103,7 +99,6 @@ struct RigidCoupleConfiguration {
     std::array<float, 3> pos_bc_val;
     bool use_maccormac;
     bool poisson_is_uniform;
-    RigidConfiguration rigid;
     EmitterConfiguration emitter;
 };
 
@@ -203,10 +198,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     arr);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
-    RigidConfiguration,
-    use_rigid);
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     EmitterConfiguration,
     use_emitter,
     tile_dim,
@@ -228,7 +219,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     pos_bc_val,
     use_maccormac,
     poisson_is_uniform,
-    rigid,
     emitter);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
