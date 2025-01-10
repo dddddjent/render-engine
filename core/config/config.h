@@ -79,14 +79,10 @@ struct FieldsConfiguration {
 };
 
 struct EmitterConfiguration {
-    bool use_emitter;
-    std::array<int, 3> tile_dim;
-    float dx;
-    std::array<float, 3> grid_origin;
-    std::string phi_path;
-    float thickness;
-    float temperature_coef;
-    float buoyancy_coef;
+    std::array<float, 3> center;
+    float radius;
+    float half_width;
+    float temperature_value;
 };
 
 struct RigidCoupleConfiguration {
@@ -98,7 +94,7 @@ struct RigidCoupleConfiguration {
     std::array<float, 3> neg_bc_val;
     std::array<float, 3> pos_bc_val;
     bool use_maccormac;
-    bool poisson_is_uniform;
+    float buoyancy_coef;
     EmitterConfiguration emitter;
 };
 
@@ -199,14 +195,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     EmitterConfiguration,
-    use_emitter,
-    tile_dim,
-    dx,
-    grid_origin,
-    phi_path,
-    thickness,
-    temperature_coef,
-    buoyancy_coef);
+    center,
+    radius,
+    half_width,
+    temperature_value);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     RigidCoupleConfiguration,
@@ -218,7 +210,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     neg_bc_val,
     pos_bc_val,
     use_maccormac,
-    poisson_is_uniform,
+    buoyancy_coef,
     emitter);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
