@@ -81,7 +81,6 @@ struct FieldsConfiguration {
 struct EmitterConfiguration {
     std::array<float, 3> center;
     float radius;
-    float half_width;
     float temperature_value;
 };
 
@@ -197,7 +196,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     EmitterConfiguration,
     center,
     radius,
-    half_width,
     temperature_value);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
