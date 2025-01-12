@@ -145,6 +145,9 @@ struct NFMConfiguration {
     std::string init_smoke_path_prefix;
     // bfecc clamp
     bool use_bfecc_clamp;
+    // staic solid
+    bool use_static_solid;
+    std::string solid_sdf_path;
 
     static NFMConfiguration Load(const std::string& config_path);
 };
@@ -277,7 +280,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     rk_order,
     num_smoke,
     init_smoke_path_prefix,
-    use_bfecc_clamp);
+    use_bfecc_clamp,
+    use_static_solid,
+    solid_sdf_path);
 
 #define JSON_GET(type, name, j, key)                                                                                                 \
     type name;                                                                                                                       \
