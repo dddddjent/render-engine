@@ -122,6 +122,10 @@ bool intersect_aabb(vec3 origin, vec3 dir, in AABB aabb, out float tentry, out f
     return tentry <= texit && texit >= 0;
 }
 
+float a = 0.10;
+float b = 0.12;
+float c = 0.14;
+
 float map_density(float sampled_density, int type)
 {
     sampled_density = sampled_density * DENSITY_GLOBAL_SCALE;
@@ -131,10 +135,10 @@ float map_density(float sampled_density, int type)
         return sampled_density * 20;
     }
     if (type == TYPE_CONCENTRATION) {
-        if (sampled_density < 0.035) {
+        if (sampled_density < 0.02) {
             return 0;
         }
-        return pow(sampled_density, 2.5) * 180;
+        return pow(sampled_density, 1.2) * 180;
     }
     return 0;
 }
@@ -150,9 +154,6 @@ vec3 density_to_color(float density) {
     color1.z *= 2.0;
     color2.z *= 2.8;
     color3.z *= 3.8;
-    float a = 0.60;
-    float b = 0.65;
-    float c = 0.78;
     density *= DENSITY_GLOBAL_SCALE;
     if (density < a) {
         return srgbToLinear(hsv_to_rgb(color1));
