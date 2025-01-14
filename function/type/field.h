@@ -31,6 +31,7 @@ struct FieldData {
 
 struct Field {
     std::string name;
+    glm::ivec3 dimension;
 
     FieldData data;
     Vk::Buffer attr_buf;
