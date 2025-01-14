@@ -240,7 +240,8 @@ Fields Fields::fromConfiguration(FieldsConfiguration& cfg)
     for (const auto& field_config : cfg.arr) {
         Field field;
 
-        field.name = field_config.name;
+        field.name      = field_config.name;
+        field.dimension = arrayToVec3(field_config.dimension);
 
         glm::vec3 start_pos     = arrayToVec3(field_config.start_pos);
         glm::vec3 size          = arrayToVec3(field_config.size);
