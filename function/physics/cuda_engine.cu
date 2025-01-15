@@ -135,11 +135,6 @@ void CudaEngine::init(Configuration& cfg, GlobalContext* g_ctx)
     cudaStreamCreate(&streamToRun);
     initSemaphore();
     initExternalMem();
-    JSON_GET(DriverConfiguration, driver_cfg, cfg, "driver")
-    total_frame     = driver_cfg.total_frame;
-    frame_rate      = driver_cfg.frame_rate;
-    steps_per_frame = driver_cfg.steps_per_frame;
-    current_frame   = 0;
 }
 
 void CudaEngine::step()
