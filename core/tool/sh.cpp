@@ -1,4 +1,5 @@
 #include "sh.h"
+#include "core/tool/logger.h"
 #include <iostream>
 
 std::string exec(const std::string& cmd)
@@ -60,6 +61,7 @@ std::string glslc(const std::filesystem::path& in, const std::filesystem::path& 
 #ifdef DEBUG
     return exec(cmd);
 #else
+    exec(cmd);
     cmd = std::string("spirv-opt -O ")
         + out.string()
         + " -o "
