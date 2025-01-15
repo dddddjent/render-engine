@@ -48,7 +48,7 @@ target("engine")
     add_packages("tinyobjloader")
     add_packages("libtiff", "libpng", "libjpeg-turbo")
     add_packages("nlohmann_json", {public=true})
-    add_packages("vtk")
+    add_packages("vtk", {public=true})
     add_packages("assimp")
 
     if is_mode("debug") then
