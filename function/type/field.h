@@ -18,7 +18,11 @@ enum class FieldDataType : uint32_t {
     TEMPERATURE   = 1,
 };
 
+#ifdef MAX_FIELD_EXT
+inline constexpr uint32_t MAX_FIELDS = MAX_FIELD_EXT;
+#else
 inline constexpr uint32_t MAX_FIELDS = 2;
+#endif
 
 struct FieldData {
     glm::mat4x4 to_local_uvw;

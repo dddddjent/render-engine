@@ -27,7 +27,7 @@ void Engine::init(Configuration& config,
     for (auto& script : this->scripts) {
         script->before_internal_engine_init(config);
     }
-    if(render_graph != nullptr) {
+    if (render_graph != nullptr) {
         INFO_ALL("Using custom render graph");
     }
     render_engine->init_render(config, &g_ctx, ui_engine->getDrawUIFunction(), std::move(render_graph));

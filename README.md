@@ -73,7 +73,7 @@ Requires a config.json
   - mesh and material are all references
 
 - Fields:
-
+  - **Add a `add_defines("MAX_FIELD_EXT=4")` before the `includes` of the engine to change the default max field count from 2 to 4.**
   - Support loading npy/vti
     - It uses the fields name to identify the field in the vti
   - data_type: temperature, concentration
