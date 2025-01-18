@@ -113,6 +113,7 @@ struct RecorderConfiguration {
     int64_t bit_rate;
     int frame_rate;
     bool record_from_start;
+    bool dump_frame = false;
 };
 
 struct RigidCoupleSimConfiguration {
@@ -251,12 +252,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     level,
     output);
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     RecorderConfiguration,
     output_path,
     bit_rate,
     frame_rate,
-    record_from_start);
+    record_from_start,
+    dump_frame);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     RigidCoupleSimConfiguration,

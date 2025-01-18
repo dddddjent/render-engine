@@ -41,10 +41,13 @@ public:
 private:
     static void encode_frame(AVFormatContext* fmt_ctx, AVCodecContext* codec_ctx, AVStream* stream, AVFrame* frame, AVPacket* packet);
     static void fill_rgb(AVFrame* frame, uint8_t* data, size_t width, size_t height);
+    static void to_png(const std::vector<uint8_t>& data, size_t width, size_t height, const std::filesystem::path& path);
 
     AVFormatContext* fmt_ctx = nullptr;
     OutputStream ost;
 
     int64_t bit_rate = 0;
     int frame_rate   = 0;
+    std::filesystem::path path;
+    bool dump_frame = false;
 };
