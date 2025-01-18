@@ -1,6 +1,8 @@
 #include "recorder.h"
+#include "boost/gil/typedefs.hpp"
 #include "core/config/config.h"
 #include "core/tool/logger.h"
+#include <boost/gil/extension/io/png.hpp>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -23,6 +25,7 @@ void Recorder::init(const Configuration& cfg)
     bit_rate     = recorder_config.bit_rate;
     frame_rate   = recorder_config.frame_rate;
     is_recording = recorder_config.record_from_start;
+    dump_frame   = recorder_config.dump_frame;
     if (is_recording) {
         begin(recorder_config.output_path, cfg["width"], cfg["height"]);
     }
@@ -158,6 +161,14 @@ void Recorder::begin(const std::filesystem::path& path, uint32_t width, uint32_t
         std::filesystem::create_directories(folder);
     }
 
+    this->path = path;
+    if (dump_frame) {
+        auto png_folder = folder / path.stem();
+        if (!std::filesystem::exists(png_folder)) {
+            std::filesystem::create_directories(png_folder);
+        }
+    }
+
     begin_ffmpeg(path, width, height);
 
     is_recording = true;
@@ -211,12 +222,34 @@ void Recorder::fill_rgb(AVFrame* frame, uint8_t* data, size_t width, size_t heig
     }
 }
 
+void Recorder::to_png(const std::vector<uint8_t>& data, size_t width, size_t height, const std::filesystem::path& filename)
+{
+    namespace gil = boost::gil;
+    if (data.size() != static_cast<size_t>(width * height * 4)) { // 3 bytes per pixel (RGB)
+        throw std::runtime_error("Data size does not match the image dimensions!");
+    }
+
+    auto view = gil::interleaved_view(
+        width, height,
+        reinterpret_cast<const gil::bgra8_pixel_t*>(data.data()), // Cast raw data to GIL pixel type
+        width * 4 // Row size in bytes (stride)
+    );
+    INFO_ALL(filename.string());
+    gil::write_view(filename, view, gil::png_tag());
+}
+
 void Recorder::append(std::vector<uint8_t>& data)
 {
     if (!is_recording) {
         CRITICAL_FILE("recording not started");
         throw std::runtime_error("recording not started");
         return;
+    }
+
+    if (dump_frame) {
+        auto folder   = path.parent_path();
+        auto png_name = folder / path.stem() / fmt::format("{}.png", ost.frame->pts);
+        to_png(data, ost.codec_ctx->width, ost.codec_ctx->height, png_name);
     }
 
     auto ret = av_frame_make_writable(ost.frame);
