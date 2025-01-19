@@ -24,6 +24,8 @@ void Object::updateTransform()
 
     param.modelInvTrans = glm::inverse(param.model);
     param.modelInvTrans = glm::transpose(param.modelInvTrans);
+
+    paramBuffer.Update(g_ctx.vk, &param, sizeof(Param));
 }
 
 Object Object::fromConfiguration(ObjectConfiguration& config)
@@ -36,7 +38,6 @@ Object Object::fromConfiguration(ObjectConfiguration& config)
     obj.translate = arrayToVec3(config.translate);
     obj.rotate    = arrayToVec3(config.rotate);
     obj.scale     = arrayToVec3(config.scale);
-    obj.updateTransform();
 
     obj.param.material = g_ctx.dm.getResourceHandle(g_ctx.rm->materials[config.material].buffer.id);
     obj.paramBuffer    = Buffer::New(
@@ -45,8 +46,10 @@ Object Object::fromConfiguration(ObjectConfiguration& config)
         VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
         true);
-    obj.paramBuffer.Update(g_ctx.vk, &obj.param, sizeof(Param));
+    // obj.paramBuffer.Update(g_ctx.vk, &obj.param, sizeof(Param)); // it is update in updateTransform
     g_ctx.dm.registerParameter(obj.paramBuffer);
+
+    obj.updateTransform();
 
     return obj;
 }
