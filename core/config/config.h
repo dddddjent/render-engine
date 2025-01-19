@@ -32,6 +32,9 @@ struct ObjectConfiguration {
     std::string name;
     std::string mesh;
     std::string material;
+    std::array<float, 3> translate = { 0, 0, 0 };
+    std::array<float, 3> rotate    = { 0, 0, 0 };
+    std::array<float, 3> scale     = { 1, 1, 1 };
 };
 
 struct LightConfiguration {
@@ -185,11 +188,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     shader_directory,
     extra_args);
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ObjectConfiguration,
     name,
     mesh,
-    material);
+    material,
+    translate,
+    rotate,
+    scale);
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     LightConfiguration,

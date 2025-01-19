@@ -71,6 +71,7 @@ Requires a config.json
 - Objects:
 
   - mesh and material are all references
+  - translate, rotate and scale are all optional
 
 - Fields:
   - **Add a `add_defines("MAX_FIELD_EXT=4")` before the `includes` of the engine to change the default max field count from 2 to 4.**

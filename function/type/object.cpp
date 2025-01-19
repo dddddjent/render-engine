@@ -1,8 +1,10 @@
 #include "object.h"
+#include "core/math/math.h"
 #include "core/tool/logger.h"
 #include "core/vulkan/vulkan_util.h"
 #include "function/global_context.h"
 #include "function/resource_manager/resource_manager.h"
+#include "glm/ext/matrix_transform.hpp"
 
 using namespace Vk;
 
@@ -11,12 +13,30 @@ void Object::destroy()
     Buffer::Delete(g_ctx.vk, paramBuffer);
 }
 
+void Object::updateTransform()
+{
+    param.model = glm::mat4(1.0f);
+    param.model = glm::translate(param.model, translate);
+    param.model = glm::rotate(param.model, glm::radians(rotate.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    param.model = glm::rotate(param.model, glm::radians(rotate.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    param.model = glm::rotate(param.model, glm::radians(rotate.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    param.model = glm::scale(param.model, scale);
+
+    param.modelInvTrans = glm::inverse(param.model);
+    param.modelInvTrans = glm::transpose(param.modelInvTrans);
+}
+
 Object Object::fromConfiguration(ObjectConfiguration& config)
 {
     Object obj;
     obj.name = config.name;
     obj.uuid = uuid::newUUID();
     obj.mesh = config.mesh;
+
+    obj.translate = arrayToVec3(config.translate);
+    obj.rotate    = arrayToVec3(config.rotate);
+    obj.scale     = arrayToVec3(config.scale);
+    obj.updateTransform();
 
     obj.param.material = g_ctx.dm.getResourceHandle(g_ctx.rm->materials[config.material].buffer.id);
     obj.paramBuffer    = Buffer::New(
