@@ -54,10 +54,13 @@ void Record::record(uint32_t swapchain_index)
             : this->attachments->getAttachment(attachment_descriptions["color"].name);
 
         image.CopyTo(g_ctx.vk, buffer, image.extent);
-        memcpy(data.data(), buffer.mapped, image.extent.width * image.extent.height * 4);
 
-        g_ctx.rm->recorder.append(data);
+        if (is_recording_prev) {
+            memcpy(data.data(), buffer.mapped, image.extent.width * image.extent.height * 4); // we are copying the last frame!
+            g_ctx.rm->recorder.append(data);
+        }
     }
+    is_recording_prev = g_ctx.rm->recorder.is_recording;
 }
 
 void Record::onResize()

@@ -234,7 +234,6 @@ void Recorder::to_png(const std::vector<uint8_t>& data, size_t width, size_t hei
         reinterpret_cast<const gil::bgra8_pixel_t*>(data.data()), // Cast raw data to GIL pixel type
         width * 4 // Row size in bytes (stride)
     );
-    INFO_ALL(filename.string());
     gil::write_view(filename, view, gil::png_tag());
 }
 
@@ -248,7 +247,7 @@ void Recorder::append(std::vector<uint8_t>& data)
 
     if (dump_frame) {
         auto folder   = path.parent_path();
-        auto png_name = folder / path.stem() / fmt::format("{}.png", ost.frame->pts);
+        auto png_name = folder / path.stem() / fmt::format("{}.png", ost.next_pts);
         to_png(data, ost.codec_ctx->width, ost.codec_ctx->height, png_name);
     }
 

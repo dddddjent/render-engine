@@ -212,8 +212,8 @@ void Image::CopyToSingleTime(
         || srcOffset.z + extent.depth > this->extent.depth)
         throw std::runtime_error("image overflow");
 
-    copyImageToBuffer(
-        ctx.commandBuffer,
+    copyImageToBufferSingleTime(
+        ctx,
         image,
         dst.buffer,
         layout,

@@ -8,6 +8,7 @@ class Record : public RenderGraphNode {
     Vk::Buffer buffer;
     RenderAttachments* attachments;
     std::vector<uint8_t> data;
+    bool is_recording_prev = false;
 
     void createBuffer();
 
