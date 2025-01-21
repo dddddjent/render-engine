@@ -24,6 +24,8 @@ public:
 
     Recorder recorder;
 
+    float inlet_angle;
+
     std::unordered_map<std::string, std::unique_ptr<Resource>> resources;
 
     void load(Configuration& config);
