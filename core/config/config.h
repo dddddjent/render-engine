@@ -130,10 +130,8 @@ struct NFMConfiguration {
     float len_y;
     std::array<int, 3> tile_dim;
     std::array<float, 3> grid_origin;
-    std::array<char, 3> neg_bc_type;
-    std::array<char, 3> pos_bc_type;
-    std::array<float, 3> neg_bc_val;
-    std::array<float, 3> pos_bc_val;
+    float inlet_norm;
+    float inlet_angle;
     // init
     std::string init_u_x_path;
     std::string init_u_y_path;
@@ -270,10 +268,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     len_y,
     tile_dim,
     grid_origin,
-    neg_bc_type,
-    pos_bc_type,
-    neg_bc_val,
-    pos_bc_val,
+    inlet_norm,
+    inlet_angle,
     init_u_x_path,
     init_u_y_path,
     init_u_z_path,
