@@ -80,6 +80,7 @@ Vk::Image Texture::loadExternalImage(const std::string& path)
         } else if constexpr (std::is_same_v<ViewType, rgb16_view_t>) {
             format = VK_FORMAT_R16G16B16_SFLOAT;
             tiling = VK_IMAGE_TILING_LINEAR;
+            throw std::runtime_error("Image rgb16 type not supported");
         } else if constexpr (std::is_same_v<ViewType, rgb32_view_t>) {
             format = VK_FORMAT_R32G32B32_SFLOAT;
             tiling = VK_IMAGE_TILING_LINEAR;
